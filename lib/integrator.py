@@ -12,14 +12,14 @@ def dp_dt(m_array, q_array):
     Time derivative of the momentum, given by the position derivative of the Hamiltonian.
     dp/dt = -dH/dq
     """
-    dp_array = np.zeros((q_array.shape[0],3))
+    dp_array = np.zeros(q_array.shape)
     for i in range(q_array.shape[0]):
-        m_j = np.delete(m_array)
-        q_j = np.delete(q_array)
-        dp_array[i] = m_array[i]*np.sum(m_j*/(q_j-q_array[i])**2, axis=0)
+        m_j = np.delete(m_array, i)
+        q_j = np.delete(q_array, i, 0)
+        dp_array = m_array[i]*np.sum((m_j/np.sum((q_j-q_array[i])**3, axis=1)).reshape((q_j.shape[0],1))*(q_j-q_array[i]), axis=0)
     return dp_array
 
-def leapfrog(duration, step, m_array, q_array, p_array):
+def frogleap(duration, step, m_array, q_array, p_array):
     """
     Leapfrog integrator for first order partial differential equations.
     iteration : half-step drift -> full-step kick -> half-step drift
