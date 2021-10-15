@@ -31,17 +31,17 @@ class System:
         coord = np.zeros(3)
         for body in self.bodylist:
             coord = coord + body.m*body.q
-        coord = coord/self.Mass
+        coord = coord/self.Mass()
         return coord
 
     def Lval(self,Lbodylist): #return angular momentum of body in bodylist
         comcoord = np.zeros(3)
         for body in Lbodylist:
             comcoord = comcoord + body.m*body.q
-        comcoord = comcoord/self.Mass
+        comcoord = comcoord/self.Mass()
         comq = np.zeros((len(Lbodylist),3))
         i = 0
-        L = 0
+        L = np.zeros(3)
         for body in Lbodylist:
             comq[i] = body.q-comcoord
             L = L + np.cross(comq[i],body.p)
@@ -63,12 +63,11 @@ q3 = np.array([2, 0, 0])
 
 # initialisation velocity
 v1 = np.array([0, 0, 0])
-v2 = np.array([1, 0, 0])
+v2 = np.array([1, 1, 0])
 v3 = np.array([2, 0, 0])
 
 
 star1 = Body(m1,q1,v1)
-print('test')
 star2 = Body(m2,q2,v2)
 star3 = Body(m3,q3,v3)
 
@@ -76,7 +75,11 @@ Lbodylist = [star1,star2]
 
 array = np.zeros((len(Lbodylist),3))
 array[0]=star3.q
-print(array[0])
 
-star2 = Body
+
+tribody = System([star1,star2,star3])
+
+print("list=",Lbodylist)
+
+print(tribody.Lval(Lbodylist))
 
