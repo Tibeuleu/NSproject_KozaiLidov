@@ -34,6 +34,20 @@ class System:
         coord = coord/self.Mass
         return coord
 
+    def Lval(self,Lbodylist): #return angular momentum of body in bodylist
+        comcoord = np.zeros(3)
+        for body in Lbodylist:
+            comcoord = comcoord + body.m*body.q
+        comcoord = comcoord/self.Mass
+        comq = np.zeros((len(Lbodylist),3))
+        i = 0
+        L = 0
+        for body in Lbodylist:
+            comq[i] = body.q-comcoord
+            L = L + np.cross(comq[i],body.p)
+            i = i+1
+        return L
+
 
     #def initialize(self):
 
@@ -58,7 +72,11 @@ print('test')
 star2 = Body(m2,q2,v2)
 star3 = Body(m3,q3,v3)
 
+Lbodylist = [star1,star2]
 
+array = np.zeros((len(Lbodylist),3))
+array[0]=star3.q
+print(array[0])
 
 star2 = Body
 
