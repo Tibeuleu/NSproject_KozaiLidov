@@ -6,7 +6,7 @@ from lib.integrator import frogleap
 
 def main():
     #initialisation
-    m = np.array([10, 2, 2])
+    m = np.array([100, 2, 2])
 
     x1 = np.array([0, 0, 0])
     x2 = np.array([1, 0, 0])
@@ -18,7 +18,7 @@ def main():
     v3 = np.array([1, 0, 0])
     p = m*np.array([v1, v2, v3])
 
-    q, p = frogleap(10, 1, m, q, p)
+    q, p = frogleap(10, 1, m, q, p, display=True)
     return 0
 
 if __name__ == '__main__':
