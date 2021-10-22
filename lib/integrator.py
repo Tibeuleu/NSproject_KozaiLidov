@@ -9,6 +9,8 @@ import numpy as np
 import time
 from lib.plots import DynamicUpdate
 
+globals()["G"] = 1. #Gravitationnal constant
+
 def dp_dt(m_array, q_array):
     """
     Time derivative of the momentum, given by the position derivative of the Hamiltonian.
@@ -18,9 +20,8 @@ def dp_dt(m_array, q_array):
     for i in range(q_array.shape[0]):
         q_j = np.delete(q_array, i, 0)
         m_j = np.delete(m_array, i).reshape((q_j.shape[0],1))
-        dp_array[i] = -m_array[i]*np.sum(m_j/np.sum(np.sqrt(np.sum((q_j-q_array[i])**2, axis=0)))**3*(q_j-q_array[i]), axis=0)
+        dp_array[i] = -G*m_array[i]*np.sum(m_j/np.sum(np.sqrt(np.sum((q_j-q_array[i])**2, axis=0)))**3*(q_j-q_array[i]), axis=0)
     dp_array[np.isnan(dp_array)] = 0.
-    print(dp_array)
     return dp_array
 
 def frogleap(duration, step, m_array, q_array, p_array, display=False):

@@ -6,7 +6,7 @@ from lib.integrator import frogleap
 
 def main():
     #initialisation
-    m = np.array([1e5, 1, 1])
+    m = np.array([1e10, 1, 1])
 
     x1 = np.array([0, 0, 0])
     x2 = np.array([1, 0, 0])
