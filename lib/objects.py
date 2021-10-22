@@ -24,6 +24,15 @@ class System:
 
     def __init__(self, bodylist):
         self.bodylist = bodylist
+    
+    def get_masses(self): #return the masses of each object
+        return np.array([body.m for body in self.bodylit])
+    
+    def get_positions(self): #return the positions of the bodies
+        return np.array([body.q for body in self.bodylist])
+    
+    def get_momenta(self): #return the momenta of the bodies
+        return np.array([body.p for body in self.bodylist])
 
     def Mass(self): #return total system mass
         mass = 0
@@ -51,6 +60,7 @@ class System:
             L = L + np.cross(comq[i],body.p)
             i = i+1
         return L
+
     def Eval(self,Lbodylist): #return total energy of bodies in bodylist
         G = 1. #Gravitational constant (here normalized)
         T = 0

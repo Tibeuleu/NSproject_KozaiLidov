@@ -3,10 +3,11 @@
 from sys import exit as sysexit
 import numpy as np
 from lib.integrator import frogleap
+import lib.objects
 
 def main():
     #initialisation
-    m = np.array([1e10, 1, 1])
+    m = np.array([1e10, 1, 0])
 
     x1 = np.array([0, 0, 0])
     x2 = np.array([1, 0, 0])

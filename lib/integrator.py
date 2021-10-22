@@ -24,12 +24,16 @@ def dp_dt(m_array, q_array):
     dp_array[np.isnan(dp_array)] = 0.
     return dp_array
 
-def frogleap(duration, step, m_array, q_array, p_array, display=False):
+def frogleap(duration, step, dyn_syst, display=False):
     """
     Leapfrog integrator for first order partial differential equations.
     iteration : half-step drift -> full-step kick -> half-step drift
     """
     N = np.ceil(duration/step).astype(int)
+    m_array = dyn_syst.get_masses()
+    q_array = dyn_syst.get_positions()
+    p_array = dyn_syst.get_momenta()
+    
     if display:
         d = DynamicUpdate()
         d.min_x, d.max_x = -1.5*np.abs(q_array).max(), +1.5*np.abs(q_array).max()
@@ -42,14 +46,17 @@ def frogleap(duration, step, m_array, q_array, p_array, display=False):
         # half-step drift
         q_array, p_array = q_array + step/2*p_array/m_array , p_array
         #print(p_array)
-        
-        # In center of mass frame
-        q_cm = np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
-        q_array -= q_cm
 
         if display:
+            # In center of mass frame
+            q_cm = np.array([0.,0.])#np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
             # display progression
-            d.on_running(q_array[:,0], q_array[:,1])
+            d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1])
             time.sleep(0.01)
+        
+        for i, body in enumerate(dyn_syst.bodylist):
+            body.q = q_array[i]
+            body.p = p_array[i]
+            body.v = body.p/body.m
 
-    return q_array, p_array
+    return dyn_syst
