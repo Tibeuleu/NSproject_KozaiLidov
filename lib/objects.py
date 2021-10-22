@@ -26,7 +26,7 @@ class System:
         self.bodylist = bodylist
     
     def get_masses(self): #return the masses of each object
-        return np.array([body.m for body in self.bodylit])
+        return np.array([body.m for body in self.bodylist])
     
     def get_positions(self): #return the positions of the bodies
         return np.array([body.q for body in self.bodylist])

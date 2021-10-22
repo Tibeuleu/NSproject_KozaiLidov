@@ -3,7 +3,7 @@
 from sys import exit as sysexit
 import numpy as np
 from lib.integrator import frogleap
-import lib.objects
+from lib.objects import Body, System
 
 def main():
     #initialisation
@@ -17,9 +17,14 @@ def main():
     v1 = np.array([0, 0, 0])
     v2 = np.array([0, 0, 0])
     v3 = np.array([0, 0, 0])
-    p = m*np.array([v1, v2, v3])
+    v = np.array([v1, v2, v3])
 
-    q, p = frogleap(10, 0.01, m, q, p, display=True)
+    bodylist = []
+    for i in range(3):
+        bodylist.append(Body(m[i], q[i], v[i]))
+    dyn_syst = System(bodylist)
+
+    new_dyn_syst = frogleap(10, 0.01, dyn_syst, display=True)
     return 0
 
 if __name__ == '__main__':
