@@ -11,6 +11,8 @@ class DynamicUpdate():
     min_x = -10
     max_x = 10
 
+    plt.ion()
+
     def on_launch(self):
         #Set up plot
         self.figure, self.ax = plt.subplots()

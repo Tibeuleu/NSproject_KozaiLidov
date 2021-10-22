@@ -16,9 +16,11 @@ def dp_dt(m_array, q_array):
     """
     dp_array = np.zeros(q_array.shape)
     for i in range(q_array.shape[0]):
-        m_j = np.delete(m_array, i)
         q_j = np.delete(q_array, i, 0)
-        dp_array = -m_array[i]*np.sum((m_j/np.sum((q_j-q_array[i])**3, axis=1)).reshape((q_j.shape[0],1))*(q_j-q_array[i]), axis=0)
+        m_j = np.delete(m_array, i).reshape((q_j.shape[0],1))
+        dp_array[i] = -m_array[i]*np.sum(m_j/np.sum(np.sqrt(np.sum((q_j-q_array[i])**2, axis=0)))**3*(q_j-q_array[i]), axis=0)
+    dp_array[np.isnan(dp_array)] = 0.
+    print(dp_array)
     return dp_array
 
 def frogleap(duration, step, m_array, q_array, p_array, display=False):
@@ -38,11 +40,15 @@ def frogleap(duration, step, m_array, q_array, p_array, display=False):
         q_array, p_array = q_array , p_array - step*dp_dt(m_array, q_array)
         # half-step drift
         q_array, p_array = q_array + step/2*p_array/m_array , p_array
+        #print(p_array)
+        
+        # In center of mass frame
+        q_cm = np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
+        q_array -= q_cm
 
         if display:
             # display progression
-            q_cm = np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
-            d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1])
-            time.sleep(0.1)
+            d.on_running(q_array[:,0], q_array[:,1])
+            time.sleep(0.01)
 
     return q_array, p_array
