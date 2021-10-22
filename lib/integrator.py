@@ -24,7 +24,7 @@ def dp_dt(m_array, q_array):
     dp_array[np.isnan(dp_array)] = 0.
     return dp_array
 
-def frogleap(duration, step, dyn_syst, display=False):
+def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     """
     Leapfrog integrator for first order partial differential equations.
     iteration : half-step drift -> full-step kick -> half-step drift
@@ -33,6 +33,7 @@ def frogleap(duration, step, dyn_syst, display=False):
     m_array = dyn_syst.get_masses()
     q_array = dyn_syst.get_positions()
     p_array = dyn_syst.get_momenta()
+    
     
     if display:
         d = DynamicUpdate()
@@ -57,6 +58,7 @@ def frogleap(duration, step, dyn_syst, display=False):
         for i, body in enumerate(dyn_syst.bodylist):
             body.q = q_array[i]
             body.p = p_array[i]
-            body.v = body.p/body.m
-
-    return dyn_syst
+            if body.m != 0.:
+                body.v = body.p/body.m
+    if recover_param:
+        return dyn_syst

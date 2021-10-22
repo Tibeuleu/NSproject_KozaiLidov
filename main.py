@@ -24,7 +24,8 @@ def main():
         bodylist.append(Body(m[i], q[i], v[i]))
     dyn_syst = System(bodylist)
 
-    new_dyn_syst = frogleap(10, 0.01, dyn_syst, display=True)
+    new_dyn_syst = frogleap(10, 0.1, dyn_syst, display=False)
+    print(np.all(new_dyn_syst.get_positions() == dyn_syst.get_positions()))
     return 0
 
 if __name__ == '__main__':
