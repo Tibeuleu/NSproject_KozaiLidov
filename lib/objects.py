@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Body:
-    
+
     def __init__(self, mass, position, velocity):
         self.m = mass
         self.q = position
@@ -16,10 +16,9 @@ class Body:
 
     def __repr__(self): # Called upon "print(body)"
         return "Body of mass: {0:.2f}kg, position: {1}, velocity: {2}".format(self.m, self.p, self.v)
-    
+
     def __str__(self): # Called upon "str(body)"
         return "Body of mass: {0:.2f}kg, position: {1}, velocity: {2}".format(self.m, self.p, self.v)
-
 
 class System:
 
@@ -54,12 +53,12 @@ class System:
         return L
 
 
-if __name__ == "__main__":        
+if __name__ == "__main__":
     # initialisation mass
     m1 = 10
     m2 = 1
     m3 = 1
-        
+
     # initialisation position
     q1 = np.array([0, 0, 0])
     q2 = np.array([1, 0, 0])
