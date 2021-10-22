@@ -38,7 +38,7 @@ class System:
         coord = coord/self.Mass()
         return coord
 
-    def Lval(self,Lbodylist): #return angular momentum of body in bodylist
+    def Lval(self,Lbodylist): #return angular momentum of bodies in bodylist
         comcoord = np.zeros(3)
         for body in Lbodylist:
             comcoord = comcoord + body.m*body.q
@@ -51,6 +51,17 @@ class System:
             L = L + np.cross(comq[i],body.p)
             i = i+1
         return L
+    def Eval(self,Lbodylist): #return total energy of bodies in bodylist
+        G = 1. #Gravitational constant (here normalized)
+        T = 0
+        W = 0
+        for body in Lbodylist:
+            T = T + 1./2.*body.m*np.linalg.norm(body.v)**2
+            for otherbody in Lbodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.q-otherbody.q)
+                    W = W - G*body.m*otherbody.m/rij
+        return T + W
 
 
 if __name__ == "__main__":
