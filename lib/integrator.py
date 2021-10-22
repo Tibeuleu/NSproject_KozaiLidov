@@ -33,20 +33,29 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     m_array = dyn_syst.get_masses()
     q_array = dyn_syst.get_positions()
     p_array = dyn_syst.get_momenta()
-    
+    E = np.zeros(N)
+    L = np.zeros(N)
     
     if display:
         d = DynamicUpdate()
         d.min_x, d.max_x = -1.5*np.abs(q_array).max(), +1.5*np.abs(q_array).max()
         d.on_launch()
-    for _ in range(N):
+    for j in range(N):
         # half-step drift
         q_array, p_array = q_array + step/2*p_array/m_array , p_array
         # full-step kick
         q_array, p_array = q_array , p_array - step*dp_dt(m_array, q_array)
         # half-step drift
         q_array, p_array = q_array + step/2*p_array/m_array , p_array
-        #print(p_array)
+        
+        for i, body in enumerate(dyn_syst.bodylist):
+            body.q = q_array[i]
+            body.p = p_array[i]
+            if body.m != 0.:
+                body.v = body.p/body.m
+        
+        E[j] = dyn_syst.Eval()
+        L[j] = dyn_syst.Lval()
 
         if display:
             # In center of mass frame
@@ -55,10 +64,5 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
             d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1])
             time.sleep(0.01)
         
-        for i, body in enumerate(dyn_syst.bodylist):
-            body.q = q_array[i]
-            body.p = p_array[i]
-            if body.m != 0.:
-                body.v = body.p/body.m
     if recover_param:
-        return dyn_syst
+        return E, L
