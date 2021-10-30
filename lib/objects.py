@@ -55,9 +55,8 @@ class System:
         return coord
 
     def COMShift(self): #Shift coordinates of bodies in system to COM frame and set COM at rest
-        comcoord = self.COM
         for body in self.bodylist:
-            body.q = body.q-self.COM()
+            body.q = body.q - self.COM()
             body.p = body.p - self.COMV()
         return 0
 

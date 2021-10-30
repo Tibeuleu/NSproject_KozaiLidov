@@ -34,7 +34,7 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     q_array = dyn_syst.get_positions()
     p_array = dyn_syst.get_momenta()
     E = np.zeros(N)
-    L = np.zeros(N)
+    L = np.zeros((N,3))
     
     if display:
         d = DynamicUpdate()
@@ -53,13 +53,14 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
             body.p = p_array[i]
             if body.m != 0.:
                 body.v = body.p/body.m
+        dyn_syst.COMShift()
         
         E[j] = dyn_syst.Eval()
         L[j] = dyn_syst.Lval()
 
         if display:
             # In center of mass frame
-            q_cm = np.array([0.,0.])#np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
+            q_cm = np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
             # display progression
             d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1])
             time.sleep(0.01)
