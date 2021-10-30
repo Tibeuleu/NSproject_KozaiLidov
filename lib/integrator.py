@@ -42,6 +42,10 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     L = np.zeros((N,3))
     
     if display:
+        try:
+            system("mkdir tmp")
+        except IOError:
+            system("rm tmp/*")
         d = DynamicUpdate()
         d.min_x, d.max_x = -1.5*np.abs(q_array).max(), +1.5*np.abs(q_array).max()
         d.on_launch()
@@ -65,15 +69,11 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
 
         if display:
             # In center of mass frame
-            q_cm = np.array([0,0])#np.sum(m_array*q_array, axis=0)/masses.sum()
+            q_cm = np.array([0,0,0])#np.sum(m_array*q_array, axis=0)/masses.sum()
             # display progression
-            d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1], step=j, label="step {0:d}/{1:d}".format(j,N))
+            d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1], q_array[:,2]-q_cm[2], step=j, label="step {0:d}/{1:d}".format(j,N))
             time.sleep(1e-4)
     if display:
-        try:
-            system("mkdir tmp")
-        except IOError:
-            system("rm tmp/*")
         system("convert -delay 5 -loop 0 tmp/?????.png tmp/temp.gif && rm tmp/?????.png")
         system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
         
