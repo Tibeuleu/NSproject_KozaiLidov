@@ -72,6 +72,8 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     if display:
         try:
             system("mkdir tmp")
+        except IOError:
+            system("rm tmp/*")
         system("convert -delay 5 -loop 0 tmp/?????.png tmp/temp.gif && rm tmp/?????.png")
         system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
         
