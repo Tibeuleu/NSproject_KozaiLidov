@@ -5,8 +5,9 @@ Implementation of the various integrators for numerical integration.
 
 Comes from the assumption that the problem is analytically defined in position-momentum (q-p) space for a given hamiltonian H.
 """
-import numpy as np
+from os import system
 import time
+import numpy as np
 from lib.plots import DynamicUpdate
 
 globals()["G"] = 1. #Gravitationnal constant
@@ -19,7 +20,7 @@ def dp_dt(m_array, q_array):
     dp_array = np.zeros(q_array.shape)
     for i in range(q_array.shape[0]):
         q_j = np.delete(q_array, i, 0)
-        m_j = np.delete(m_array, i).reshape((q_j.shape[0],1))
+        m_j = np.delete(m_array, i, 0)#.reshape((q_j.shape[0],1))
         dp_array[i] = -G*m_array[i]*np.sum(m_j/np.sum(np.sqrt(np.sum((q_j-q_array[i])**2, axis=0)))**3*(q_j-q_array[i]), axis=0)
     dp_array[np.isnan(dp_array)] = 0.
     return dp_array
@@ -30,9 +31,13 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     iteration : half-step drift -> full-step kick -> half-step drift
     """
     N = np.ceil(duration/step).astype(int)
-    m_array = dyn_syst.get_masses()
     q_array = dyn_syst.get_positions()
     p_array = dyn_syst.get_momenta()
+    masses = dyn_syst.get_masses()
+    m_array = np.ones(p_array.shape)
+    for i in range(p_array.shape[0]):
+        m_array[i,:] = masses[i]
+    
     E = np.zeros(N)
     L = np.zeros((N,3))
     
@@ -60,10 +65,13 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
 
         if display:
             # In center of mass frame
-            q_cm = np.sum(m_array.reshape((q_array.shape[0],1))*q_array, axis=0)/m_array.sum()
+            q_cm = np.array([0,0])#np.sum(m_array*q_array, axis=0)/masses.sum()
             # display progression
-            d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1])
-            time.sleep(0.01)
+            d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1], step=j, label="step {0:d}/{1:d}".format(j,N))
+            time.sleep(1e-4)
+    if display:
+        system("convert -delay 5 -loop 0 tmp/????.png tmp/temp.gif && rm tmp/?????.png")
+        system("convert tmp/temp.gif -fuzz 10% -layers Optimize dynsyst.gif && rm tmp/temp.gif")
         
     if recover_param:
         return E, L

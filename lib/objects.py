@@ -77,6 +77,12 @@ class System:
                     rij = np.linalg.norm(body.q-otherbody.q)
                     W = W - G*body.m*otherbody.m/rij
         return T + W
+    
+    def __repr__(self): # Called upon "print(system)"
+        return str([print(body) for body in self.bodylist])
+
+    def __str__(self): # Called upon "str(system)"
+        return str([str(body) for body in self.bodylist])
 
 
 if __name__ == "__main__":
