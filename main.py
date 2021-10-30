@@ -21,21 +21,23 @@ def main():
     v = np.array([v1, v2, v3])
 
     bodylist = []
-    for i in range(2):
+    for i in range(2): # For a system of 2 objects
         bodylist.append(Body(m[i], q[i], v[i]))
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()
 
-    duration, step = 100, 0.01
+    duration, step = 50, 0.01
     E, L = frogleap(duration, step, dyn_syst, recover_param=True, display=True)
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111)
     ax1.plot(np.arange(E.shape[0])/duration, E, label=r"$E_m$")
     ax1.legend()
+    fig1.savefig("plots/Em.png",bbox_inches="tight")
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111)
     ax2.plot(np.arange(L.shape[0])/duration, np.sum(L**2,axis=1), label=r"$L^2$")
     ax2.legend()
+    fig2.savefig("plots/L2.png",bbox_inches="tight")
     plt.show(block=True)
     return 0
 

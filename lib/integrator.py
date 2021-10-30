@@ -70,8 +70,10 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
             d.on_running(q_array[:,0]-q_cm[0], q_array[:,1]-q_cm[1], step=j, label="step {0:d}/{1:d}".format(j,N))
             time.sleep(1e-4)
     if display:
-        system("convert -delay 5 -loop 0 tmp/????.png tmp/temp.gif && rm tmp/?????.png")
-        system("convert tmp/temp.gif -fuzz 10% -layers Optimize dynsyst.gif && rm tmp/temp.gif")
+        try:
+            system("mkdir tmp")
+        system("convert -delay 5 -loop 0 tmp/?????.png tmp/temp.gif && rm tmp/?????.png")
+        system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
         
     if recover_param:
         return E, L
