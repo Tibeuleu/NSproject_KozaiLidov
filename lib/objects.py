@@ -100,14 +100,16 @@ class System:
 
     def Update_a(self): #update acceleration of bodies in system
         for body in self.bodylist:
+            body.a = np.zeros(3)
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
-                    body.a = body.a - (body.q-otherbody.q)*G*otherbody.m/(rij**2)
+                    body.a = body.a - (body.q-otherbody.q)*G*otherbody.m/(rij**3)
         return 1
 
     def Update_j(self): #update jerk of bodies in system
         for body in self.bodylist:
+            body.j = np.zeros(3)
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
@@ -121,18 +123,21 @@ class System:
         for body in self.bodylist:
             body.qp = body.q +dt*body.v+((dt**2)*body.a/2.)+((dt**3)*body.j/6.)
             body.vp = body.v + dt*body.a + ((dt**2)*body.j/2.)
+            #print("v=",body.v," vp=" ,body.vp)
         return 1
 
     def Update_ap(self): #update acceleration of bodies in system
         for body in self.bodylist:
+            body.ap = np.zeros(3)
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.qp-otherbody.qp)
-                    body.ap = body.ap - (body.qp-otherbody.qp)*G*otherbody.m/(rij**2)
+                    body.ap = body.ap - (body.qp-otherbody.qp)*G*otherbody.m/(rij**3)
         return 1
 
     def Update_jp(self): #update jerk of bodies in system
         for body in self.bodylist:
+            body.jp = np.zeros(3)
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.qp-otherbody.qp)
