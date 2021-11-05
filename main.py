@@ -33,8 +33,9 @@ def main():
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()
 
-    duration, step = 100*3e7, 1e5
+    duration, step = 100*3e7, 1e4
     E, L = frogleap(duration, step, dyn_syst, recover_param=True)#, display=True)
+    #dyn_syst.hermite(duration,step, display=True)
     
     fig1 = plt.figure(figsize=(30,15))
     ax1 = fig1.add_subplot(111)

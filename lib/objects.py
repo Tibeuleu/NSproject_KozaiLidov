@@ -3,7 +3,9 @@
 """
 Class definition for physical atribute
 """
+from os import system
 import numpy as np
+from lib.plots import DynamicUpdate
 
 globals()['G'] = 6.67e-11 #Gravitational constant in SI units
 globals()['Ms'] = 2e30 #Solar mass in kg
@@ -150,15 +152,38 @@ class System:
         return 1
 
     def HPC(self, dt):  # update position and velocities of bodies in system with hermite predictor corrector
-        self.update_a()
-        self.update_j()
-        self.predict(dt)
-        self.update_ap()
-        self.update_jp()
-        self.update(dt)
+        self.COMShift()
+        self.Update_a()
+        self.Update_j()
+        self.Predict(dt)
+        self.Update_ap()
+        self.Update_jp()
+        self.Correct(dt)
         self.time = self.time + dt
         for body in self.bodylist:
             body.p = body.v*body.m
+    
+    def hermite(self, duration, dt, display=False):
+        if display:
+            try:
+                system("mkdir tmp")
+            except IOError:
+                system("rm tmp/*")
+            d = DynamicUpdate()
+            d.on_launch()
+
+        N = np.ceil(duration/dt).astype(int)
+        for j in range(N):
+            self.HPC(dt)
+
+            if display:
+                # display progression
+                q_array = self.get_positions()
+                if len(self.bodylist) == 1:
+                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                else:
+                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                #time.sleep(1e-5)
 
         return 1
 
