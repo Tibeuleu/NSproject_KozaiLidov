@@ -157,5 +157,8 @@ class System:
         self.update_jp()
         self.update(dt)
         self.time = self.time + dt
+        for body in self.bodylist:
+            body.p = body.v*body.m
 
         return 1
+
