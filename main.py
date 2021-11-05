@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3])
 
     bodylist = []
-    for i in range(2): # For a system of 2 objects
+    for i in range(m.shape[0]):
         bodylist.append(Body(m[i], q[i], v[i]))
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()

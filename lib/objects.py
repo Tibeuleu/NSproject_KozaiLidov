@@ -85,37 +85,3 @@ class System:
 
     def __str__(self): # Called upon "str(system)"
         return str([str(body) for body in self.bodylist])
-
-
-if __name__ == "__main__":
-    # initialisation mass
-    m1 = 10
-    m2 = 1
-    m3 = 1
-
-    # initialisation position
-    q1 = np.array([0, 0, 0])
-    q2 = np.array([1, 0, 0])
-    q3 = np.array([2, 0, 0])
-
-    # initialisation velocity
-    v1 = np.array([0, 0, 0])
-    v2 = np.array([1, 1, 0])
-    v3 = np.array([2, 0, 0])
-
-
-    star1 = Body(m1,q1,v1)
-    star2 = Body(m2,q2,v2)
-    star3 = Body(m3,q3,v3)
-
-    Lbodylist = [star1,star2]
-
-    array = np.zeros((len(Lbodylist),3))
-    array[0]=star3.q
-
-
-    tribody = System([star1,star2,star3])
-
-    print("list=",Lbodylist)
-
-    print(tribody.Lval(Lbodylist))
