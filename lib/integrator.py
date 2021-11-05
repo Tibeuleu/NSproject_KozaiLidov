@@ -27,6 +27,7 @@ def dv_dt(m_array, q_array):
     dv_array[np.isnan(dv_array)] = 0.
     return dv_array
 
+
 def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
     """
     Leapfrog integrator for first order partial differential equations.

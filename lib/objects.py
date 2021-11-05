@@ -16,6 +16,12 @@ class Body:
         self.q = position
         self.v = velocity
         self.p = velocity*mass
+        self.a = np.zeros(3)
+        self.ap = np.zeros(3)
+        self.j = np.zeros(3)
+        self.jp = np.zeros(3)
+        self.qp = np.zeros(3)
+        self.vp = np.zeros(3)
 
     def __repr__(self): # Called upon "print(body)"
         return "Body of mass: {0:.2f}kg, position: {1}, velocity: {2}".format(self.m, self.p, self.v)
@@ -26,7 +32,8 @@ class Body:
 class System:
 
     def __init__(self, bodylist):
-        self.bodylist = bodylist
+        self.bodylist = np.array(bodylist)
+        self.time = 0
     
     def get_masses(self): #return the masses of each object
         return np.array([body.m for body in self.bodylist])
@@ -88,3 +95,67 @@ class System:
 
     def __str__(self): # Called upon "str(system)"
         return str([str(body) for body in self.bodylist])
+
+    def Update_a(self): #update acceleration of bodies in system
+        for body in self.bodylist:
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.q-otherbody.q)
+                    body.a = body.a - (body.q-otherbody.q)*G*otherbody.m/(rij**2)
+        return 1
+
+    def Update_j(self): #update jerk of bodies in system
+        for body in self.bodylist:
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.q-otherbody.q)
+                    deltav = (body.v-otherbody.v)
+                    deltar = (body.q-otherbody.q)
+                    vr = deltav + 3.*deltar*np.inner(deltav,deltar)/(rij**2)
+                    body.j = body.j - G*otherbody.m/(rij**3)*vr
+        return 1
+
+    def Predict(self,dt):  # update predicted position and velocities of bodies in system
+        for body in self.bodylist:
+            body.qp = body.q +dt*body.v+((dt**2)*body.a/2.)+((dt**3)*body.j/6.)
+            body.vp = body.v + dt*body.a + ((dt**2)*body.j/2.)
+        return 1
+
+    def Update_ap(self): #update acceleration of bodies in system
+        for body in self.bodylist:
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.qp-otherbody.qp)
+                    body.ap = body.ap - (body.qp-otherbody.qp)*G*otherbody.m/(rij**2)
+        return 1
+
+    def Update_jp(self): #update jerk of bodies in system
+        for body in self.bodylist:
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.qp-otherbody.qp)
+                    deltav = (body.vp-otherbody.vp)
+                    deltar = (body.qp-otherbody.qp)
+                    vr = deltav + 3.*deltar*np.inner(deltav,deltar)/(rij**2)
+                    body.jp = body.jp - G*otherbody.m/(rij**3)*vr
+        return 1
+
+    def Correct(self,dt):  # correct position and velocities of bodies in system
+        for body in self.bodylist:
+            a2 = (6.*(body.a-body.ap)+dt*(4*body.j+2*body.jp))/(dt**2)
+            a3 = (12. * (body.a - body.ap) + dt * 6. * (body.j + body.jp)) / (dt ** 3)
+
+            body.q = body.qp +((dt**4)*a2/24.) + ((dt**5)*a3/120.)
+            body.v = body.vp +((dt**3)*a2/6.) + ((dt**4)*a3/24.)
+        return 1
+
+    def HPC(self, dt):  # update position and velocities of bodies in system with hermite predictor corrector
+        self.update_a()
+        self.update_j()
+        self.predict(dt)
+        self.update_ap()
+        self.update_jp()
+        self.update(dt)
+        self.time = self.time + dt
+
+        return 1
