@@ -12,12 +12,12 @@ def main():
 
     x1 = np.array([-1, 0, 0])
     x2 = np.array([1, 0, 0])
-    x3 = np.array([100, 0, 0])
+    x3 = np.array([100, 0, 20])
     q = np.array([x1, x2, x3])
 
     v1 = np.array([0, -0.35, 0])
     v2 = np.array([0, 0.35, 0])
-    v3 = np.array([0, 0, 0])
+    v3 = np.array([0, 20., 0])
     v = np.array([v1, v2, v3])
 
     bodylist = []
@@ -26,14 +26,14 @@ def main():
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()
 
-    duration, step = 50, 0.01
-    E, L = frogleap(duration, step, dyn_syst, recover_param=True, display=True)
-    fig1 = plt.figure()
+    duration, step = 100, 0.01
+    E, L = frogleap(duration, step, dyn_syst, recover_param=True)#, display=True)
+    fig1 = plt.figure(figsize=(30,15))
     ax1 = fig1.add_subplot(111)
     ax1.plot(np.arange(E.shape[0])/duration, E, label=r"$E_m$")
     ax1.legend()
     fig1.savefig("plots/Em.png",bbox_inches="tight")
-    fig2 = plt.figure()
+    fig2 = plt.figure(figsize=(30,15))
     ax2 = fig2.add_subplot(111)
     ax2.plot(np.arange(L.shape[0])/duration, np.sum(L**2,axis=1), label=r"$L^2$")
     ax2.legend()

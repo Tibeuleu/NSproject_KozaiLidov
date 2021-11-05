@@ -39,7 +39,7 @@ class DynamicUpdate():
         #We need to draw *and* flush
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        if not step is None and step%50==0:
+        if not step is None and step%10==0:
             self.fig.savefig("tmp/{0:05d}.png".format(step),bbox_inches="tight")
 
     #Example
