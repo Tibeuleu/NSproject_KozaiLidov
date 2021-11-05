@@ -30,17 +30,18 @@ class DynamicUpdate():
 
     def on_running(self, xdata, ydata, zdata, step=None, label=None):
         #Update data (with the new _and_ the old points)
-        self.lines.set_data_3d(xdata, ydata, zdata)
-        if not label is None:
-            self.ax.set_title(label)
-        #Need both of these in order to rescale
-        self.ax.relim()
-        self.ax.autoscale_view()
-        #We need to draw *and* flush
-        self.fig.canvas.draw()
-        self.fig.canvas.flush_events()
-        if not step is None and step%10==0:
-            self.fig.savefig("tmp/{0:05d}.png".format(step),bbox_inches="tight")
+        if not step is None and step%100==0:
+            self.lines.set_data_3d(xdata, ydata, zdata)
+            if not label is None:
+                self.ax.set_title(label)
+            #Need both of these in order to rescale
+            self.ax.relim()
+            self.ax.autoscale_view()
+            #We need to draw *and* flush
+            self.fig.canvas.draw()
+            self.fig.canvas.flush_events()
+            if not step is None and step%100==0:
+                self.fig.savefig("tmp/{0:05d}.png".format(step),bbox_inches="tight")
 
     #Example
     def __call__(self):

@@ -5,6 +5,9 @@ Class definition for physical atribute
 """
 import numpy as np
 
+globals()['G'] = 6.67e-11 #Gravitational constant in SI units
+globals()['Ms'] = 2e30 #Solar mass in kg
+globals()['au'] = 1.5e11 #Astronomical unit in m
 
 class Body:
 
@@ -67,7 +70,6 @@ class System:
         return L
 
     def Eval(self): #return total energy of bodies in system
-        G = 1. #Gravitational constant (here normalized)
         T = 0
         W = 0
         for body in self.bodylist:

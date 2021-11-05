@@ -10,7 +10,9 @@ import time
 import numpy as np
 from lib.plots import DynamicUpdate
 
-globals()["G"] = 1. #Gravitationnal constant
+globals()['G'] = 6.67e-11 #Gravitational constant in SI units
+globals()['Ms'] = 2e30 #Solar mass in kg
+globals()['au'] = 1.5e11 #Astronomical unit in m
 
 def dp_dt(m_array, q_array):
     """
@@ -20,7 +22,7 @@ def dp_dt(m_array, q_array):
     dp_array = np.zeros(q_array.shape)
     for i in range(q_array.shape[0]):
         q_j = np.delete(q_array, i, 0)
-        m_j = np.delete(m_array, i, 0)#.reshape((q_j.shape[0],1))
+        m_j = np.delete(m_array, i, 0)
         dp_array[i] = -G*m_array[i]*np.sum(m_j/np.sum(np.sqrt(np.sum((q_j-q_array[i])**2, axis=0)))**3*(q_j-q_array[i]), axis=0)
     dp_array[np.isnan(dp_array)] = 0.
     return dp_array
