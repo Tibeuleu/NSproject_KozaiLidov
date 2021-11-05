@@ -34,6 +34,9 @@ class System:
     def get_positions(self): #return the positions of the bodies
         return np.array([body.q for body in self.bodylist])
     
+    def get_velocities(self): #return the positions of the bodies
+        return np.array([body.v for body in self.bodylist])
+    
     def get_momenta(self): #return the momenta of the bodies
         return np.array([body.p for body in self.bodylist])
 
