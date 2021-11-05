@@ -22,19 +22,19 @@ def main():
     x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])])*a[2]
     q = np.array([x1, x2, x3])
 
-    v1 = np.array([0., -1./3*np.sqrt(G*(m[0]+m[1])*a[0]*(1-e[0]**2)*(1+e[0])**2/np.sum(q[0]**2)), 0.])
-    v2 = np.array([0., 1./3*np.sqrt(G*(m[0]+m[1])*a[1]*(1-e[1]**2)*(1+e[1])**2/np.sum(q[1]**2)), 0.])
-    v3 = np.array([0., np.sqrt(G*(m[0]+m[1])*(2./np.sqrt(np.sum(x3**2))-1./a[2])), 0.])
+    v1 = np.array([0., -np.sqrt(G*m[1]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0.])
+    v2 = np.array([0., np.sqrt(G*m[0]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0.])
+    v3 = np.array([0., np.sqrt(G*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.])
     v = np.array([v1, v2, v3])
 
     bodylist = []
-    for i in range(3):
+    for i in range(2):
         bodylist.append(Body(m[i], q[i], v[i]))
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()
 
-    duration, step = 10*3e7, 5e5
-    E, L = frogleap(duration, step, dyn_syst, recover_param=True, display=True)
+    duration, step = 100*3e7, 1e5
+    E, L = frogleap(duration, step, dyn_syst, recover_param=True)#, display=True)
     
     fig1 = plt.figure(figsize=(30,15))
     ax1 = fig1.add_subplot(111)
