@@ -6,7 +6,6 @@ Implementation of the various integrators for numerical integration.
 Comes from the assumption that the problem is analytically defined in position-momentum (q-p) space for a given hamiltonian H.
 """
 from os import system
-import time
 import numpy as np
 from lib.plots import DynamicUpdate
 
@@ -74,7 +73,7 @@ def frogleap(duration, step, dyn_syst, recover_param=False, display=False):
                 d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
             else:
                 d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
-            time.sleep(1e-5)
+
     if display:
         system("convert -delay 5 -loop 0 tmp/?????.png tmp/temp.gif && rm tmp/?????.png")
         system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")

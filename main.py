@@ -35,7 +35,7 @@ def main():
 
     duration, step = 100*3e7, 1e4
     E, L = frogleap(duration, step, dyn_syst, recover_param=True)#, display=True)
-    #dyn_syst.hermite(duration,step, display=True)
+    E, L = dyn_syst.hermite(duration,step, recover_param=True, display=True)
     
     fig1 = plt.figure(figsize=(30,15))
     ax1 = fig1.add_subplot(111)

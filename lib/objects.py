@@ -163,7 +163,7 @@ class System:
         for body in self.bodylist:
             body.p = body.v*body.m
     
-    def hermite(self, duration, dt, display=False):
+    def hermite(self, duration, dt, recover_param=False, display=False):
         if display:
             try:
                 system("mkdir tmp")
@@ -173,8 +173,13 @@ class System:
             d.on_launch()
 
         N = np.ceil(duration/dt).astype(int)
+        E = np.zeros(N)
+        L = np.zeros((N,3))
         for j in range(N):
             self.HPC(dt)
+
+            E[j] = self.Eval()
+            L[j] = self.Lval()
 
             if display:
                 # display progression
@@ -183,7 +188,7 @@ class System:
                     d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
                 else:
                     d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
-                #time.sleep(1e-5)
-
-        return 1
+        
+        if recover_param:
+            return E, L
 
