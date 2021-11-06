@@ -21,7 +21,7 @@ class DynamicUpdate():
 
     def on_launch(self):
         #Set up plot
-        self.fig = plt.figure()
+        self.fig = plt.figure(figsize=(10,10))
         self.ax = self.fig.add_subplot(projection='3d')
         self.lines, = self.ax.plot([],[],[],'o')
         #Autoscale on unknown axis and known lims on the other
@@ -45,8 +45,8 @@ class DynamicUpdate():
         #We need to draw *and* flush
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        if not step is None and step%10==0:
-            self.fig.savefig("tmp/{0:05d}.png".format(step),bbox_inches="tight")
+        if not step is None and step%1000==0:
+            self.fig.savefig("tmp/{0:06d}.png".format(step),bbox_inches="tight")
 
     #Example
     def __call__(self):

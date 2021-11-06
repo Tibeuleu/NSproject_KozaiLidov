@@ -91,12 +91,61 @@ class System:
                     rij = np.linalg.norm(body.q-otherbody.q)
                     W = W - G*body.m*otherbody.m/rij
         return T + W
-    
-    def __repr__(self): # Called upon "print(system)"
-        return str([print(body) for body in self.bodylist])
 
-    def __str__(self): # Called upon "str(system)"
-        return str([str(body) for body in self.bodylist])
+    def Drift(self, dt):
+        for body in self.bodylist:
+            body.q = body.q + dt*body.v
+    
+    def Kick(self, dt):
+        for body in self.bodylist:
+            body.a = np.zeros(3)
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.q-otherbody.q)
+                    body.a = body.a - (body.q-otherbody.q)*G*otherbody.m/(rij**3)
+            body.v = body.v + dt*body.a
+        
+    def LP(self, dt):
+        self.COMShift()
+        self.Drift(dt/2)
+        self.Kick(dt)
+        self.Drift(dt/2)
+        self.time = self.time + dt
+        for body in self.bodylist:
+            body.p = body.v*body.m
+    
+    def leapfrog(self, duration, dt, recover_param=False, display=False):
+        if display:
+            try:
+                system("mkdir tmp")
+            except IOError:
+                system("rm tmp/*")
+            d = DynamicUpdate()
+            d.on_launch()
+
+        N = np.ceil(duration/dt).astype(int)
+        E = np.zeros(N)
+        L = np.zeros((N,3))
+        for j in range(N):
+            self.LP(dt)
+
+            E[j] = self.Eval()
+            L[j] = self.Lval()
+
+            if display and j%100==0:
+                # display progression
+                q_array = self.get_positions()
+                if len(self.bodylist) == 1:
+                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                else:
+                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
+        if display:
+            system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
+            system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
+     
+        if recover_param:
+            return E, L
+         
 
     def Update_a(self): #update acceleration of bodies in system
         for body in self.bodylist:
@@ -105,7 +154,6 @@ class System:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
                     body.a = body.a - (body.q-otherbody.q)*G*otherbody.m/(rij**3)
-        return 1
 
     def Update_j(self): #update jerk of bodies in system
         for body in self.bodylist:
@@ -117,14 +165,11 @@ class System:
                     deltar = (body.q-otherbody.q)
                     vr = deltav + 3.*deltar*np.inner(deltav,deltar)/(rij**2)
                     body.j = body.j - G*otherbody.m/(rij**3)*vr
-        return 1
 
     def Predict(self,dt):  # update predicted position and velocities of bodies in system
         for body in self.bodylist:
             body.qp = body.q +dt*body.v+((dt**2)*body.a/2.)+((dt**3)*body.j/6.)
             body.vp = body.v + dt*body.a + ((dt**2)*body.j/2.)
-            #print("v=",body.v," vp=" ,body.vp)
-        return 1
 
     def Update_ap(self): #update acceleration of bodies in system
         for body in self.bodylist:
@@ -133,7 +178,6 @@ class System:
                 if body != otherbody:
                     rij = np.linalg.norm(body.qp-otherbody.qp)
                     body.ap = body.ap - (body.qp-otherbody.qp)*G*otherbody.m/(rij**3)
-        return 1
 
     def Update_jp(self): #update jerk of bodies in system
         for body in self.bodylist:
@@ -145,7 +189,6 @@ class System:
                     deltar = (body.qp-otherbody.qp)
                     vr = deltav + 3.*deltar*np.inner(deltav,deltar)/(rij**2)
                     body.jp = body.jp - G*otherbody.m/(rij**3)*vr
-        return 1
 
     def Correct(self,dt):  # correct position and velocities of bodies in system
         for body in self.bodylist:
@@ -154,7 +197,6 @@ class System:
 
             body.q = body.qp +((dt**4)*a2/24.) + ((dt**5)*a3/120.)
             body.v = body.vp +((dt**3)*a2/6.) + ((dt**4)*a3/24.)
-        return 1
 
     def HPC(self, dt):  # update position and velocities of bodies in system with hermite predictor corrector
         self.COMShift()
@@ -186,14 +228,23 @@ class System:
             E[j] = self.Eval()
             L[j] = self.Lval()
 
-            if display:
+            if display and j%100==0:
                 # display progression
                 q_array = self.get_positions()
                 if len(self.bodylist) == 1:
                     d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
                 else:
                     d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
-        
+        if display:
+            system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
+            system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
+     
         if recover_param:
             return E, L
+ 
+    def __repr__(self): # Called upon "print(system)"
+        return str([print(body) for body in self.bodylist])
+
+    def __str__(self): # Called upon "str(system)"
+        return str([str(body) for body in self.bodylist])
 
