@@ -33,7 +33,7 @@ class DynamicUpdate():
 
     def on_running(self, xdata, ydata, zdata, step=None, label=None):
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
-        self.min_x, self.max_x = -np.abs(values).max(), np.abs(values).max()
+        self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
         #Update data (with the new _and_ the old points)
         self.lines.set_data_3d(xdata, ydata, zdata)
