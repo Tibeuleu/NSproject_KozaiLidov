@@ -132,13 +132,13 @@ class System:
             E[j] = self.Eval()
             L[j] = self.Lval()
 
-            if display and (j+1)%100==0:
+            if display and j%100==0:
                 # display progression
                 q_array = self.get_positions()
                 if len(self.bodylist) == 1:
-                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j+1,N))
+                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
                 else:
-                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j+1,N))
+                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
             system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
@@ -228,13 +228,13 @@ class System:
             E[j] = self.Eval()
             L[j] = self.Lval()
 
-            if display and (j+1)%100==0:
+            if display and j%100==0:
                 # display progression
                 q_array = self.get_positions()
                 if len(self.bodylist) == 1:
-                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j+1,N))
+                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
                 else:
-                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j+1,N))
+                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
             system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
