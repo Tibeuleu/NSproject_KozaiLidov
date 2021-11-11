@@ -26,10 +26,10 @@ class Body:
         self.vp = np.zeros(3)
 
     def __repr__(self): # Called upon "print(body)"
-        return "Body of mass: {0:.2f}kg, position: {1}, velocity: {2}".format(self.m, self.p, self.v)
+        return "Body of mass: {0:.2e}kg, position: {1}, velocity: {2}".format(self.m, self.q, self.v)
 
     def __str__(self): # Called upon "str(body)"
-        return "Body of mass: {0:.2f}kg, position: {1}, velocity: {2}".format(self.m, self.p, self.v)
+        return "Body of mass: {0:.2e}kg".format(self.m)
 
 class System:
 
@@ -120,7 +120,7 @@ class System:
                 system("mkdir tmp")
             except IOError:
                 system("rm tmp/*")
-            d = DynamicUpdate()
+            d = DynamicUpdate(self)
             d.on_launch()
 
         N = np.ceil(duration/dt).astype(int)
@@ -134,14 +134,13 @@ class System:
 
             if display and j%100==0:
                 # display progression
-                q_array = self.get_positions()
                 if len(self.bodylist) == 1:
-                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                    d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
                 else:
-                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                    d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
-            system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
+            system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/dynsyst.gif")# && rm tmp/temp.gif")
      
         if recover_param:
             return E, L
@@ -216,7 +215,7 @@ class System:
                 system("mkdir tmp")
             except IOError:
                 system("rm tmp/*")
-            d = DynamicUpdate()
+            d = DynamicUpdate(self)
             d.on_launch()
 
         N = np.ceil(duration/dt).astype(int)
@@ -230,14 +229,13 @@ class System:
 
             if display and j%100==0:
                 # display progression
-                q_array = self.get_positions()
                 if len(self.bodylist) == 1:
-                    d.on_running(q_array[0], q_array[1], q_array[2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                    d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
                 else:
-                    d.on_running(q_array[:,0], q_array[:,1], q_array[:,2], step=j, label="step {0:d}/{1:d}".format(j,N))
+                    d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
-            system("convert tmp/temp.gif -fuzz 30% -layers Optimize plots/dynsyst.gif && rm tmp/temp.gif")
+            system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/dynsyst.gif")# && rm tmp/temp.gif")
      
         if recover_param:
             return E, L

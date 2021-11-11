@@ -14,6 +14,9 @@ class DynamicUpdate():
 
     plt.ion()
 
+    def __init__(self, dyn_syst):
+        self.dyn_syst = dyn_syst
+
     def set_lims(self, factor=1.5):
         self.ax.set_xlim(factor*self.min_x, factor*self.max_x)
         self.ax.set_ylim(factor*self.min_x, factor*self.max_x)
@@ -23,20 +26,28 @@ class DynamicUpdate():
         #Set up plot
         self.fig = plt.figure(figsize=(10,10))
         self.ax = self.fig.add_subplot(projection='3d')
-        self.lines, = self.ax.plot([],[],[],'o')
+        self.lines = []
+        for i,body in enumerate(self.dyn_syst.bodylist):
+            x, y, z = body.q
+            lines, = self.ax.plot([x],[y],[z],'o',color="C{0:d}".format(i),label="{0:s}".format(str(body)))
+            self.lines.append(lines)
+        self.lines = np.array(self.lines)
         #Autoscale on unknown axis and known lims on the other
         self.ax.set_autoscaley_on(True)
         self.set_lims()
         #Other stuff
         self.ax.grid()
-        #self.ax.set_aspect('equal')
+        self.ax.legend()
 
-    def on_running(self, xdata, ydata, zdata, step=None, label=None):
+    def on_running(self, dyn_syst, step=None, label=None):
+        xdata, ydata, zdata = dyn_syst.get_positions()
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
         #Update data (with the new _and_ the old points)
-        self.lines.set_data_3d(xdata, ydata, zdata)
+        for i,body in enumerate(dyn_syst.bodylist):
+            x, y, z = body.q
+            self.lines[i].set_data_3d([x], [y], [z])
         if not label is None:
             self.ax.set_title(label)
         #Need both of these in order to rescale
