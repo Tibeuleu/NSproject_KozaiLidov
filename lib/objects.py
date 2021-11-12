@@ -1,15 +1,12 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 """
-Class definition for physical atribute
+Class definition for physical attribute
 """
 from os import system
 import numpy as np
 from lib.plots import DynamicUpdate
-
-globals()['G'] = 6.67e-11 #Gravitational constant in SI units
-globals()['Ms'] = 2e30 #Solar mass in kg
-globals()['au'] = 1.5e11 #Astronomical unit in m
+from lib.units import *
 
 class Body:
 
@@ -33,7 +30,8 @@ class Body:
 
 class System:
 
-    def __init__(self, bodylist):
+    def __init__(self, bodylist, blackstyle=True):
+        self.blackstyle = blackstyle
         self.bodylist = np.array(bodylist)
         self.time = 0
     
@@ -41,7 +39,10 @@ class System:
         return np.array([body.m for body in self.bodylist])
     
     def get_positions(self): #return the positions of the bodies
-        return np.array([body.q for body in self.bodylist])
+        xdata = np.array([body.q[0] for body in self.bodylist])
+        ydata = np.array([body.q[1] for body in self.bodylist])
+        zdata = np.array([body.q[2] for body in self.bodylist])
+        return xdata, ydata, zdata
     
     def get_velocities(self): #return the positions of the bodies
         return np.array([body.v for body in self.bodylist])
@@ -121,7 +122,7 @@ class System:
             except IOError:
                 system("rm tmp/*")
             d = DynamicUpdate(self)
-            d.on_launch()
+            d.launch(self.blackstyle)
 
         N = np.ceil(duration/dt).astype(int)
         E = np.zeros(N)
@@ -139,6 +140,7 @@ class System:
                 else:
                     d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
+            d.close()
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
             system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/dynsyst.gif")# && rm tmp/temp.gif")
      
@@ -216,7 +218,7 @@ class System:
             except IOError:
                 system("rm tmp/*")
             d = DynamicUpdate(self)
-            d.on_launch()
+            d.launch(self.blackstyle)
 
         N = np.ceil(duration/dt).astype(int)
         E = np.zeros(N)
@@ -234,6 +236,7 @@ class System:
                 else:
                     d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
+            d.close()
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
             system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/dynsyst.gif")# && rm tmp/temp.gif")
      
