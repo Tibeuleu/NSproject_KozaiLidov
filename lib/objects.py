@@ -115,7 +115,7 @@ class System:
         for body in self.bodylist:
             body.p = body.v*body.m
     
-    def leapfrog(self, duration, dt, recover_param=False, display=False):
+    def leapfrog(self, duration, dt, recover_param=False, display=False, savename=None):
         if display:
             try:
                 system("mkdir tmp")
@@ -141,8 +141,9 @@ class System:
                     d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
             d.close()
-            system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
-            system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/dynsyst.gif")# && rm tmp/temp.gif")
+            if not savename is None:
+                system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
+                system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/{0:s}_dynsyst.gif".format(savename))
      
         if recover_param:
             return E, L
@@ -211,7 +212,7 @@ class System:
         for body in self.bodylist:
             body.p = body.v*body.m
     
-    def hermite(self, duration, dt, recover_param=False, display=False):
+    def hermite(self, duration, dt, recover_param=False, display=False, savename=None):
         if display:
             try:
                 system("mkdir tmp")
@@ -237,8 +238,9 @@ class System:
                     d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))
         if display:
             d.close()
-            system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
-            system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/dynsyst.gif")# && rm tmp/temp.gif")
+            if not savename is None:
+                system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
+                system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/{0:s}_dynsyst.gif".format(savename))
      
         if recover_param:
             return E, L

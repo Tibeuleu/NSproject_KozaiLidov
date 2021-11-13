@@ -24,19 +24,31 @@ def main():
     v3 = np.array([0., np.sqrt(G*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.])
     v = np.array([v1, v2, v3])
 
+    #integration parameters
+    duration, step = 100*yr, [1e4, 1e5]
+    integrator = "leapfrog"
+    n_bodies = 2
+    display = False
+    savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
+
+    #simulation start
     bodylist = []
-    for i in range(3):
+    for i in range(n_bodies):
         bodylist.append(Body(m[i], q[i], v[i]))
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()
 
-    duration, step1, step2 = 100*yr, 1e4, 1e5
-    E1, L1 = dyn_syst.leapfrog(duration, step1, recover_param=True, display=True)
-    E2, L2 = dyn_syst.leapfrog(duration, step2, recover_param=True)#, display=True)
-    #E1, L1 = dyn_syst.hermite(duration, step1, recover_param=True)#, display=True)
-    #E2, L2 = dyn_syst.hermite(duration, step2, recover_param=True)#, display=True)
-    parameters = [duration, [step1, step2], dyn_syst, "leapfrog"]
-    display_parameters([E1, E2], [L1, L2], parameters=parameters, savename="3bodies_mass_leapfrog")
+    E, L = [], []
+    for step0 in step:
+        if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
+            E0, L0 = dyn_syst.leapfrog(duration, step0, recover_param=True, display=display, savename=savename)
+        elif integrator.lower() in ['hermite','herm']:
+            E0, L0 = dyn_syst.hermite(duration, step0, recover_param=True, display=display, savename=savename)
+        E.append(E0)
+        L.append(L0)
+
+    parameters = [duration, step, dyn_syst, integrator]
+    display_parameters(E, L, parameters=parameters, savename=savename)
 
     return 0
 
