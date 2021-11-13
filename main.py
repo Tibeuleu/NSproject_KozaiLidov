@@ -25,16 +25,16 @@ def main():
     v = np.array([v1, v2, v3])
 
     bodylist = []
-    for i in range(2):
+    for i in range(3):
         bodylist.append(Body(m[i], q[i], v[i]))
     dyn_syst = System(bodylist)
     dyn_syst.COMShift()
 
     duration, step = 100*yr, 1e4
-    #E, L = dyn_syst.leapfrog(duration, step, recover_param=True)#, display=True)
-    E, L = dyn_syst.hermite(duration,step, recover_param=True)#, display=True)
+    #E, L = dyn_syst.leapfrog(duration, step, recover_param=True, display=True)
+    E, L = dyn_syst.hermite(duration,step, recover_param=True, display=True)
     parameters = [duration, step, dyn_syst, "hermite"]
-    display_parameters(E, L, parameters=parameters, savename="2bodies_hermite")
+    display_parameters(E, L, parameters=parameters, savename="3bodies_hermite")
 
     return 0
 

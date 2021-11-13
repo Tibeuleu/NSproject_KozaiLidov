@@ -92,7 +92,7 @@ class DynamicUpdate():
             self.fig.savefig("tmp/{0:06d}.png".format(step),bbox_inches="tight")
     
     def close(self):
-        self.fig.close()
+        plt.close()
 
     #Example
     def __call__(self):
@@ -117,7 +117,7 @@ def display_parameters(E,L,parameters,savename=""):
     bodies = ""
     for body in dyn_syst.bodylist:
         bodies += str(body)+" ; "
-    title = "Relative difference of the {} "+"for a system composed of {0:s} \nintegrated with {1:s} for a duration of {2:.2f} years with a step of {3:.2e} years.".format(bodies, integrator, duration/yr, step/yr)
+    title = "Relative difference of the {} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years with a step of {3:.2e} years.".format(bodies, integrator, duration/yr, step/yr)
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)
     ax1.plot(np.arange(E.shape[0])*step/yr, np.abs((E-E[0])/E[0]), label=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$")
