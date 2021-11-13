@@ -9,7 +9,7 @@ from lib.units import *
 
 def main():
     #initialisation
-    m = np.array([1., 1., 0])*Ms  # Masses in Solar mass
+    m = np.array([1., 1., 1e-5])*Ms  # Masses in Solar mass
     a = np.array([1., 1., 5.])*au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 1./4.])   # Eccentricity
     psi = np.array([0., 0., 0.])*np.pi/180.    # Inclination of the orbital plane in degrees
@@ -31,12 +31,12 @@ def main():
     dyn_syst.COMShift()
 
     duration, step1, step2 = 100*yr, 1e4, 1e5
-    E1, L1 = dyn_syst.leapfrog(duration, step1, recover_param=True)#, display=True)
+    E1, L1 = dyn_syst.leapfrog(duration, step1, recover_param=True, display=True)
     E2, L2 = dyn_syst.leapfrog(duration, step2, recover_param=True)#, display=True)
     #E1, L1 = dyn_syst.hermite(duration, step1, recover_param=True)#, display=True)
     #E2, L2 = dyn_syst.hermite(duration, step2, recover_param=True)#, display=True)
     parameters = [duration, [step1, step2], dyn_syst, "leapfrog"]
-    display_parameters([E1, E2], [L1, L2], parameters=parameters, savename="3bodies_leapfrog")
+    display_parameters([E1, E2], [L1, L2], parameters=parameters, savename="3bodies_mass_leapfrog")
 
     return 0
 
