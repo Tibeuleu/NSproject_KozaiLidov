@@ -114,22 +114,30 @@ def display_parameters(E,L,parameters,savename=""):
     if savename != "":
         savename += "_"
     duration, step, dyn_syst, integrator = parameters
+    if type(step) != list:
+        step = [step]
+    if (len(E) == duration//step[0]) and (len(L) == duration//step[0]):
+        E, L = [E], [L]
     bodies = ""
     for body in dyn_syst.bodylist:
         bodies += str(body)+" ; "
-    title = "Relative difference of the {} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years with a step of {3:.2e} years.".format(bodies, integrator, duration/yr, step/yr)
+    title = "Relative difference of the {0:s} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration/yr)
+
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)
-    ax1.plot(np.arange(E.shape[0])*step/yr, np.abs((E-E[0])/E[0]), label=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$")
+    for i in range(len(E)):
+        ax1.plot(np.arange(E[i].shape[0])*step[i]/yr, np.abs((E[i]-E[i][0])/E[i][0]), label="step of {0:.2e}yr".format(step[i]/yr))
     ax1.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$", yscale='log')
     ax1.legend()
     fig1.suptitle(title.format("mechanical energy"))
     fig1.savefig("plots/{0:s}dEm.png".format(savename),bbox_inches="tight")
+
     fig2 = plt.figure(figsize=(15,7))
     ax2 = fig2.add_subplot(111)
-    dL = ((L-L[0])/L[0])
-    dL[np.isnan(dL)] = 0.
-    ax2.plot(np.arange(L.shape[0])*step/yr, np.abs(np.sum(dL,axis=1)), label=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$")
+    for i in range(len(L)):
+        dL = ((L[i]-L[i][0])/L[i][0])
+        dL[np.isnan(dL)] = 0.
+        ax2.plot(np.arange(L[i].shape[0])*step[i]/yr, np.abs(np.sum(dL,axis=1)), label="step of {0:.2e}yr".format(step[i]/yr))
     ax2.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$",yscale='log')
     ax2.legend()
     fig2.suptitle(title.format("kinetic moment"))
