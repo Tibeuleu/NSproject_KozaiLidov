@@ -110,12 +110,12 @@ def display_parameters(E,L,parameters,savename=""):
     bodies = ""
     for body in dyn_syst.bodylist:
         bodies += str(body)+" ; "
-    title = "Relative difference of the {0:s} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration)
+    title = "Relative difference of the {0:s} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration/yr)
 
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)
     for i in range(len(E)):
-        ax1.plot(np.arange(E[i].shape[0])*step[i], np.abs((E[i]-E[i][0])/E[i][0]), label="step of {0:.2e}yr".format(step[i]))
+        ax1.plot(np.arange(E[i].shape[0])*step[i]/yr, np.abs((E[i]-E[i][0])/E[i][0]), label="step of {0:.2e}yr".format(step[i]/yr))
     ax1.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$", yscale='log')
     ax1.legend()
     fig1.suptitle(title.format("mechanical energy"))
@@ -126,7 +126,7 @@ def display_parameters(E,L,parameters,savename=""):
     for i in range(len(L)):
         dL = ((L[i]-L[i][0])/L[i][0])
         dL[np.isnan(dL)] = 0.
-        ax2.plot(np.arange(L[i].shape[0])*step[i], np.abs(np.sum(dL,axis=1)), label="step of {0:.2e}yr".format(step[i]))
+        ax2.plot(np.arange(L[i].shape[0])*step[i]/yr, np.abs(np.sum(dL,axis=1)), label="step of {0:.2e}yr".format(step[i]/yr))
     ax2.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$",yscale='log')
     ax2.legend()
     fig2.suptitle(title.format("kinetic moment"))
