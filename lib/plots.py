@@ -107,11 +107,6 @@ def display_parameters(E,L,parameters,savename=""):
     if savename != "":
         savename += "_"
     duration, step, dyn_syst, integrator = parameters
-    if type(step) != list:
-        step = [step]
-    print(E.shape, L.shape)
-    if (len(E.shape) == 1) and (len(L.shape) == 2):
-        E, L = [E], [L]
     bodies = ""
     for body in dyn_syst.bodylist:
         bodies += str(body)+" ; "

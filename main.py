@@ -28,7 +28,7 @@ def main():
     duration, step = 100*yr/yr, np.array([1./(365.25*2.), 1./365.25])*yr/yr #integration time and step in years
     integrator = "leapfrog"
     n_bodies = 2
-    display = False
+    display = True
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
