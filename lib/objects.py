@@ -23,10 +23,10 @@ class Body:
         self.vp = np.zeros(3)
 
     def __repr__(self): # Called upon "print(body)"
-        return "Body of mass: {0:.2e}kg, position: {1}, velocity: {2}".format(self.m, self.q, self.v)
+        return r"Body of mass: {0:.2f} $M_\odot$, position: {1}, velocity: {2}".format(self.m, self.q, self.v)
 
     def __str__(self): # Called upon "str(body)"
-        return "Body of mass: {0:.2e}kg".format(self.m)
+        return r"Body of mass: {0:.2f} $M_\odot$".format(self.m)
 
 class System:
 
@@ -35,20 +35,30 @@ class System:
         self.bodylist = np.array(bodylist)
         self.time = 0
     
+    @property
     def get_masses(self): #return the masses of each object
         return np.array([body.m for body in self.bodylist])
     
+    @property
     def get_positions(self): #return the positions of the bodies
         xdata = np.array([body.q[0] for body in self.bodylist])
         ydata = np.array([body.q[1] for body in self.bodylist])
         zdata = np.array([body.q[2] for body in self.bodylist])
         return xdata, ydata, zdata
     
+    @property
     def get_velocities(self): #return the positions of the bodies
-        return np.array([body.v for body in self.bodylist])
+        vxdata = np.array([body.v[0] for body in self.bodylist])
+        vydata = np.array([body.v[1] for body in self.bodylist])
+        vzdata = np.array([body.v[2] for body in self.bodylist])
+        return vxdata, vydata, vzdata
     
+    @property
     def get_momenta(self): #return the momenta of the bodies
-        return np.array([body.p for body in self.bodylist])
+        pxdata = np.array([body.p[0] for body in self.bodylist])
+        pydata = np.array([body.p[1] for body in self.bodylist])
+        pzdata = np.array([body.p[2] for body in self.bodylist])
+        return pxdata, pydata, pzdata
 
     def Mass(self): #return total system mass
         mass = 0
@@ -133,7 +143,7 @@ class System:
             E[j] = self.Eval()
             L[j] = self.Lval()
 
-            if display and j%100==0:
+            if display and j%5==0:
                 # display progression
                 if len(self.bodylist) == 1:
                     d.on_running(self, step=j, label="step {0:d}/{1:d}".format(j,N))

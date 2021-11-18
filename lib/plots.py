@@ -10,8 +10,8 @@ from lib.units import *
 
 class DynamicUpdate():
     #Suppose we know the x range
-    min_x = -10
-    max_x = 10
+    min_x = -1
+    max_x = 1
 
     plt.ion()
 
@@ -64,11 +64,17 @@ class DynamicUpdate():
         self.ax.grid()
         if self.blackstyle:
             self.ax.legend(labelcolor='w', frameon=True, framealpha=0.2)
+            self.ax.set_xlabel('AU', color='w')
+            self.ax.set_ylabel('AU', color='w')
+            self.ax.set_zlabel('AU', color='w')
         else:
             self.ax.legend()
+            self.ax.set_xlabel('AU')
+            self.ax.set_ylabel('AU')
+            self.ax.set_zlabel('AU')
 
     def on_running(self, dyn_syst, step=None, label=None):
-        xdata, ydata, zdata = dyn_syst.get_positions()
+        xdata, ydata, zdata = dyn_syst.get_positions
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
@@ -88,25 +94,12 @@ class DynamicUpdate():
         #We need to draw *and* flush
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        if not step is None and step%1000==0:
+        if not step is None and step%10==0:
             self.fig.savefig("tmp/{0:06d}.png".format(step),bbox_inches="tight")
     
     def close(self):
         plt.close()
 
-    #Example
-    def __call__(self):
-        import numpy as np
-        import time
-        self.on_launch()
-        xdata = []
-        ydata = []
-        for x in np.arange(0,10,0.5):
-            xdata.append(x)
-            ydata.append(np.exp(-x**2)+10*np.exp(-(x-7)**2))
-            self.on_running(xdata, ydata)
-            time.sleep(1)
-        return xdata, ydata
 
 def display_parameters(E,L,parameters,savename=""):
     """
@@ -116,17 +109,18 @@ def display_parameters(E,L,parameters,savename=""):
     duration, step, dyn_syst, integrator = parameters
     if type(step) != list:
         step = [step]
-    if (len(E) == duration//step[0]) and (len(L) == duration//step[0]):
+    print(E.shape, L.shape)
+    if (len(E.shape) == 1) and (len(L.shape) == 2):
         E, L = [E], [L]
     bodies = ""
     for body in dyn_syst.bodylist:
         bodies += str(body)+" ; "
-    title = "Relative difference of the {0:s} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration/yr)
+    title = "Relative difference of the {0:s} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration)
 
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)
     for i in range(len(E)):
-        ax1.plot(np.arange(E[i].shape[0])*step[i]/yr, np.abs((E[i]-E[i][0])/E[i][0]), label="step of {0:.2e}yr".format(step[i]/yr))
+        ax1.plot(np.arange(E[i].shape[0])*step[i], np.abs((E[i]-E[i][0])/E[i][0]), label="step of {0:.2e}yr".format(step[i]))
     ax1.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$", yscale='log')
     ax1.legend()
     fig1.suptitle(title.format("mechanical energy"))
@@ -137,7 +131,7 @@ def display_parameters(E,L,parameters,savename=""):
     for i in range(len(L)):
         dL = ((L[i]-L[i][0])/L[i][0])
         dL[np.isnan(dL)] = 0.
-        ax2.plot(np.arange(L[i].shape[0])*step[i]/yr, np.abs(np.sum(dL,axis=1)), label="step of {0:.2e}yr".format(step[i]/yr))
+        ax2.plot(np.arange(L[i].shape[0])*step[i], np.abs(np.sum(dL,axis=1)), label="step of {0:.2e}yr".format(step[i]))
     ax2.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$",yscale='log')
     ax2.legend()
     fig2.suptitle(title.format("kinetic moment"))

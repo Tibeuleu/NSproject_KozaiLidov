@@ -9,8 +9,8 @@ from lib.units import *
 
 def main():
     #initialisation
-    m = np.array([1., 1., 1e-5])*Ms  # Masses in Solar mass
-    a = np.array([1., 1., 5.])*au   # Semi-major axis in astronomical units
+    m = np.array([1., 1., 1e-5])*Ms/Ms  # Masses in Solar mass
+    a = np.array([1., 1., 5.])*au/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 1./4.])   # Eccentricity
     psi = np.array([0., 0., 0.])*np.pi/180.    # Inclination of the orbital plane in degrees
 
@@ -25,7 +25,7 @@ def main():
     v = np.array([v1, v2, v3])
 
     #integration parameters
-    duration, step = 100*yr, [1e4, 1e5]
+    duration, step = 100*yr/yr, np.array([1./(365.25*2.), 1./365.25])*yr/yr #integration time and step in years
     integrator = "leapfrog"
     n_bodies = 2
     display = False
