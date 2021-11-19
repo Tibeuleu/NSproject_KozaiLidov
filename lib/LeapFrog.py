@@ -36,7 +36,7 @@ def LP(dyn_syst, dt):
         body.p = body.v * body.m
 
 
-def leapfrog(dyn_syst, duration, dt, recover_param=False, display=False, savename=None):
+def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None):
     if display:
         try:
             system("mkdir tmp")
@@ -48,11 +48,15 @@ def leapfrog(dyn_syst, duration, dt, recover_param=False, display=False, savenam
     N = np.ceil(duration / dt).astype(int)
     E = np.zeros(N)
     L = np.zeros((N, 3))
+    sma = np.zeros(N)
+    ecc = np.zeros(N)
     for j in range(N):
         LP(dyn_syst,dt)
 
         E[j] = dyn_syst.E
         L[j] = dyn_syst.L
+        sma[j] = bin_syst.sma
+        ecc[j] = bin_syst.ecc
 
         if display and j % 5 == 0:
             # display progression
@@ -67,4 +71,4 @@ def leapfrog(dyn_syst, duration, dt, recover_param=False, display=False, savenam
             system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/{0:s}_dynsyst.gif".format(savename))
 
     if recover_param:
-        return E, L
+        return E, L, sma, ecc

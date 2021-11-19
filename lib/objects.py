@@ -23,10 +23,10 @@ class Body:
         self.vp = np.zeros(3)
 
     def __repr__(self): # Called upon "print(body)"
-        return r"Body of mass: {0:.2f} $M_\odot$, position: {1}, velocity: {2}".format(self.m/Ms, self.q, self.v)
+        return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m/Ms, self.q, self.v)
 
     def __str__(self): # Called upon "str(body)"
-        return r"Body of mass: {0:.2f} $M_\odot$".format(self.m/Ms)
+        return r"Body of mass: {0:.1e} $M_\odot$".format(self.m/Ms)
 
 class System(Body):
 
@@ -127,7 +127,7 @@ class System(Body):
         return mu
 
     @property
-    def ex(self): #exentricity of system (if composed of 2 bodies)
+    def ecc(self): #eccentricity of system (if composed of 2 bodies)
         if len(self.bodylist) != 2 :
             return np.nan
         else:

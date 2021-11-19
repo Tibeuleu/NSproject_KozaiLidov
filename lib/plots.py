@@ -75,12 +75,12 @@ class DynamicUpdate():
 
     def on_running(self, dyn_syst, step=None, label=None):
         xdata, ydata, zdata = dyn_syst.get_positions
-        values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
+        values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))/au
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
         #Update data (with the new _and_ the old points)
         for i,body in enumerate(dyn_syst.bodylist):
-            x, y, z = body.q
+            x, y, z = body.q/au
             self.lines[i].set_data_3d([x], [y], [z])
         if not label is None:
             if self.blackstyle:
@@ -101,7 +101,7 @@ class DynamicUpdate():
         plt.close()
 
 
-def display_parameters(E,L,parameters,savename=""):
+def display_parameters(E,L,sma,ecc,parameters,savename=""):
     """
     """
     if savename != "":
@@ -110,15 +110,15 @@ def display_parameters(E,L,parameters,savename=""):
     bodies = ""
     for body in dyn_syst.bodylist:
         bodies += str(body)+" ; "
-    title = "Relative difference of the {0:s} "+"for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration/yr)
+    title1, title2 = "Relative difference of the {0:s} ","for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration/yr)
 
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)
     for i in range(len(E)):
         ax1.plot(np.arange(E[i].shape[0])*step[i]/yr, np.abs((E[i]-E[i][0])/E[i][0]), label="step of {0:.2e}yr".format(step[i]/yr))
-    ax1.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$", yscale='log')
+    ax1.set(xlabel=r"$t [yr]$", ylabel=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$", yscale='log')
     ax1.legend()
-    fig1.suptitle(title.format("mechanical energy"))
+    fig1.suptitle(title1.format("mechanical energy")+title2)
     fig1.savefig("plots/{0:s}dEm.png".format(savename),bbox_inches="tight")
 
     fig2 = plt.figure(figsize=(15,7))
@@ -127,9 +127,19 @@ def display_parameters(E,L,parameters,savename=""):
         dL = ((L[i]-L[i][0])/L[i][0])
         dL[np.isnan(dL)] = 0.
         ax2.plot(np.arange(L[i].shape[0])*step[i]/yr, np.abs(np.sum(dL,axis=1)), label="step of {0:.2e}yr".format(step[i]/yr))
-    ax2.set(xlabel=r"$t (yr)$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$",yscale='log')
+    ax2.set(xlabel=r"$t [yr]$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$",yscale='log')
     ax2.legend()
-    fig2.suptitle(title.format("kinetic moment"))
+    fig2.suptitle(title1.format("kinetic moment")+title2)
     fig2.savefig("plots/{0:s}dL2.png".format(savename),bbox_inches="tight")
+
+    fig3 = plt.figure(figsize=(15,7))
+    ax3 = fig3.add_subplot(111)
+    ax3.plot(np.arange(sma.shape[0])*step[i]/yr, sma, label="a (semi major axis)")
+    ax3.plot(np.arange(ecc.shape[0])*step[i]/yr, ecc, label="e (eccentricity)")
+    ax3.set(xlabel=r"$t [yr]$", ylabel=r"$a [au] or e$")
+    ax3.legend()
+    fig3.suptitle("Semi major axis and eccentricity "+title2)
+    fig3.savefig("plots/{0:s}a_e.png".format(savename),bbox_inches="tight")
+
     plt.show(block=True)
   
