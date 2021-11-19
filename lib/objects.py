@@ -32,9 +32,9 @@ class System(Body):
 
     def __init__(self, bodylist, main = False, blackstyle=True):
         self.blackstyle = blackstyle #for dark mode in plot
+        self.bodylist = np.array(bodylist)
         if main == True :
             self.COMShift()
-        self.bodylist = np.array(bodylist)
         self.time = 0 #lifetime of system
         self.m = self.M
         self.q = self.COM
