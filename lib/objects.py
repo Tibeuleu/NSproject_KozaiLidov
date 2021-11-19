@@ -17,10 +17,10 @@ class Body:
         self.p = velocity*mass
 
     def __repr__(self): # Called upon "print(body)"
-        return r"Body of mass: {0:.2f} $M_\odot$, position: {1}, velocity: {2}".format(self.m/Ms, self.q, self.v)
+        return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m/Ms, self.q, self.v)
 
     def __str__(self): # Called upon "str(body)"
-        return r"Body of mass: {0:.2f} $M_\odot$".format(self.m/Ms)
+        return r"Body of mass: {0:.1e} $M_\odot$".format(self.m/Ms)
 
 class System(Body):
 
