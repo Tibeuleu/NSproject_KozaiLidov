@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3])
 
     #integration parameters
-    duration, step = 100*yr, np.array([1./(365.25*2.), 1./365.25])*yr #integration time and step in years
+    duration, step = 100*yr, np.array([1./(365.25*4.), 1./(365.25*2.), 1./365.25])*yr #integration time and step in years
     integrator = "leapfrog"
     n_bodies = 2
     display = False
