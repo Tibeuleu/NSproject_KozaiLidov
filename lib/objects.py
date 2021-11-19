@@ -93,14 +93,14 @@ class System(Body):
     def COMV(self): #return center of mass velocity in cartesian np_array
         coord = np.zeros(3)
         for body in self.bodylist:
-            coord = coord + body.p
+            coord = coord + body.v
         coord = coord/self.M
         return coord
 
     def COMShift(self): #Shift coordinates of bodies in system to COM frame and set COM at rest
         for body in self.bodylist:
             body.q = body.q - self.COM
-            body.p = body.p - self.COMV
+            body.v = body.v - self.COMV
 
     @property
     def L(self): #return angular momentum of bodies in system
