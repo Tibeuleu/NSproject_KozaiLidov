@@ -27,30 +27,31 @@ def main():
     v = np.array([v1, v2, v3])
 
     #integration parameters
-    duration, step = 100*yr, np.array([1./(365.25*4.), 1./(365.25*2.), 1./365.25])*yr #integration time and step in years
+    duration, step = 100*yr, np.array([1./(365.25*2.), 1./(365.25*2.), 1./365.25])*yr #integration time and step in years
+
     integrator = "leapfrog"
     n_bodies = 2
-    display = False
+    display = True
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
     bodylist = []
     for i in range(n_bodies):
         bodylist.append(Body(m[i], q[i], v[i]))
-    dyn_syst = System(bodylist)
-    dyn_syst.COMShift()
+    bin_syst = System(bodylist[0:2])
+    dyn_syst = System(bodylist, main=True)
 
     E, L = [], []
     for step0 in step:
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0 = leapfrog(dyn_syst,duration, step0, recover_param=True, display=display, savename=savename)
+            E0, L0, sma, ecc = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename)
         elif integrator.lower() in ['hermite','herm']:
-            E0, L0 = hermite(dyn_syst, duration, step0, recover_param=True, display=display, savename=savename)
+            E0, L0, sma, ecc = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename)
         E.append(E0)
         L.append(L0)
 
     parameters = [duration, step, dyn_syst, integrator]
-    display_parameters(E, L, parameters=parameters, savename=savename)
+    display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
 
     return 0
 
