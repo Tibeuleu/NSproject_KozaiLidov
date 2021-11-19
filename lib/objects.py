@@ -129,7 +129,7 @@ class System(Body):
         return mu
 
     @property
-    def ecc(self): #exentricity of sub system of
+    def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
             ecc = (2.*self.E*(np.linalg.norm(self.L)**2))/((G**2)*(self.M**2)*(self.mu**3)) + 1.
         else :
@@ -137,7 +137,7 @@ class System(Body):
         return ecc
 
     @property
-    def sma(self): #semi major axis of system (if composed of 2 bodies)
+    def sma(self): #semi major axis of two body sub system
         if len(self.bodylist) == 2 :
             sma = -G*self.M*self.mu/(2.*self.E)
         else :
