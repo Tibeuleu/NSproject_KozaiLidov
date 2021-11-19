@@ -4,6 +4,8 @@ from sys import exit as sysexit
 import numpy as np
 import matplotlib.pyplot as plt
 from lib.objects import Body, System
+from lib.LeapFrog import leapfrog
+from lib.hermite import hermite
 from lib.plots import display_parameters
 from lib.units import *
 
@@ -41,9 +43,9 @@ def main():
     E, L = [], []
     for step0 in step:
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0 = dyn_syst.leapfrog(duration, step0, recover_param=True, display=display, savename=savename)
+            E0, L0 = leapfrog(dyn_syst,duration, step0, recover_param=True, display=display, savename=savename)
         elif integrator.lower() in ['hermite','herm']:
-            E0, L0 = dyn_syst.hermite(duration, step0, recover_param=True, display=display, savename=savename)
+            E0, L0 = hermite(dyn_syst, duration, step0, recover_param=True, display=display, savename=savename)
         E.append(E0)
         L.append(L0)
 
