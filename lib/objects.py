@@ -14,7 +14,6 @@ class Body:
         self.m = mass
         self.q = position
         self.v = velocity
-        self.p = velocity * mass
         self.a = np.zeros(3)
         self.ap = np.zeros(3)
         self.j = np.zeros(3)
@@ -27,6 +26,10 @@ class Body:
 
     def __str__(self): # Called upon "str(body)"
         return r"Body of mass: {0:.1e} $M_\odot$".format(self.m/Ms)
+
+    @property
+    def p(self):
+        return self.v*self.m
 
 class System(Body):
 
@@ -121,7 +124,6 @@ class System(Body):
          
     @property
     def mu(self):
-        sum = 0
         prod = 1
         for body in self.bodylist:
             prod = prod * body.m

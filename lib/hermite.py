@@ -77,8 +77,6 @@ def HPC(dyn_syst, dt):  # update position and velocities of bodies in system wit
     Update_jp(dyn_syst)
     Correct(dyn_syst, dt)
     dyn_syst.time = dyn_syst.time + dt
-    for body in dyn_syst.bodylist:
-        body.p = body.v * body.m
 
 
 def hermite(dyn_syst, duration, dt, recover_param=False, display=False, savename=None):

@@ -32,9 +32,6 @@ def LP(dyn_syst, dt):
     Kick(dyn_syst, dt)
     Drift(dyn_syst, dt / 2)
     dyn_syst.time = dyn_syst.time + dt
-    for body in dyn_syst.bodylist:
-        body.p = body.v * body.m
-
 
 def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None):
     if display:
