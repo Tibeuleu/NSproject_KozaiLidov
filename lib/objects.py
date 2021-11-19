@@ -143,4 +143,3 @@ class System(Body):
         else :
             sma = np.nan
         return sma
-

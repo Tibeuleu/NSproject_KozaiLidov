@@ -8,6 +8,7 @@ import time
 import matplotlib.pyplot as plt
 from lib.units import *
 
+
 class DynamicUpdate():
     #Suppose we know the x range
     min_x = -1
@@ -39,7 +40,6 @@ class DynamicUpdate():
         self.ax.w_xaxis.set_pane_color((0,0,0,0))
         self.ax.w_yaxis.set_pane_color((0,0,0,0))
         self.ax.w_zaxis.set_pane_color((0,0,0,0))
-        
 
     def launch(self, blackstyle=True):
         #Set up plot
@@ -94,7 +94,7 @@ class DynamicUpdate():
         #We need to draw *and* flush
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        if not step is None and step%10==0:
+        if not step is None and step%100==0:
             self.fig.savefig("tmp/{0:06d}.png".format(step),bbox_inches="tight")
     
     def close(self):

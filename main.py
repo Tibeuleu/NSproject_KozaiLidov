@@ -31,7 +31,7 @@ def main():
 
     integrator = "leapfrog"
     n_bodies = 2
-    display = True
+    display = False
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
