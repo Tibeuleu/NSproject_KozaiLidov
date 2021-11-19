@@ -30,8 +30,10 @@ class Body:
 
 class System(Body):
 
-    def __init__(self, bodylist, blackstyle=True):
+    def __init__(self, bodylist, main = False, blackstyle=True):
         self.blackstyle = blackstyle #for dark mode in plot
+        if main == True :
+            self.COMShift()
         self.bodylist = np.array(bodylist)
         self.time = 0 #lifetime of system
         self.m = self.M
@@ -127,17 +129,18 @@ class System(Body):
         return mu
 
     @property
-    def ex(self): #exentricity of system (if composed of 2 bodies)
-        if len(self.bodylist) != 2 :
-            return np.nan
-        else:
-            k = (2.*self.E*(np.linalg.norm(self.L)**2))/((G**2)*(self.M**2)*(self.mu**3)) + 1.
-            return k
+    def ecc(self): #exentricity of sub system of
+        if len(self.bodylist) == 2 :
+            ecc = (2.*self.E*(np.linalg.norm(self.L)**2))/((G**2)*(self.M**2)*(self.mu**3)) + 1.
+        else :
+            ecc = np.nan
+        return ecc
 
     @property
     def sma(self): #semi major axis of system (if composed of 2 bodies)
-        if len(self.bodylist) != 2 :
-            return np.nan
-        else:
+        if len(self.bodylist) == 2 :
             sma = -G*self.M*self.mu/(2.*self.E)
-            return sma
+        else :
+            sma = np.nan
+        return sma
+
