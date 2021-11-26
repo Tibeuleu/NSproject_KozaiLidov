@@ -22,10 +22,10 @@ class Body:
         self.vp = np.zeros(3)
 
     def __repr__(self): # Called upon "print(body)"
-        return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m/Ms, self.q, self.v)
+        return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m, self.q, self.v)
 
     def __str__(self): # Called upon "str(body)"
-        return r"Body of mass: {0:.1e} $M_\odot$".format(self.m/Ms)
+        return r"Body of mass: {0:.1e} $M_\odot$".format(self.m)
 
     @property
     def p(self):
@@ -118,7 +118,7 @@ class System(Body):
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
-                    W = W - G*body.m*otherbody.m/rij
+                    W = W - Ga*body.m*otherbody.m/rij
         E = T + W
         return E
          
@@ -133,7 +133,7 @@ class System(Body):
     @property
     def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
-            ecc = (2.*self.E*(np.linalg.norm(self.L)**2))/((G**2)*(self.M**2)*(self.mu**3)) + 1.
+            ecc = (2.*self.E*(np.linalg.norm(self.L)**2))/((Ga**2)*(self.M**2)*(self.mu**3)) + 1.
         else :
             ecc = np.nan
         return ecc
@@ -141,7 +141,7 @@ class System(Body):
     @property
     def sma(self): #semi major axis of two body sub system
         if len(self.bodylist) == 2 :
-            sma = -G*self.M*self.mu/(2.*self.E)
+            sma = -Ga*self.M*self.mu/(2.*self.E)
         else :
             sma = np.nan
         return sma

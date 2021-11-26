@@ -11,8 +11,8 @@ from lib.units import *
 
 def main():
     #initialisation
-    m = np.array([1., 1., 1e-5])*Ms  # Masses in Solar mass
-    a = np.array([1., 1., 5.])*au   # Semi-major axis in astronomical units
+    m = np.array([1., 1., 1e-5])*Ms/Ms  # Masses in Solar mass
+    a = np.array([1., 1., 5.])*au/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 1./4.])   # Eccentricity
     psi = np.array([0., 0., 0.])*np.pi/180.    # Inclination of the orbital plane in degrees
 
@@ -21,13 +21,13 @@ def main():
     x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])])*a[2]
     q = np.array([x1, x2, x3])
 
-    v1 = np.array([np.sqrt(G*m[1]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
-    v2 = np.array([-np.sqrt(G*m[0]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
-    v3 = np.array([0., np.sqrt(G*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.])
+    v1 = np.array([np.sqrt(Ga*m[1]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
+    v2 = np.array([-np.sqrt(Ga*m[0]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
+    v3 = np.array([0., np.sqrt(Ga*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.])
     v = np.array([v1, v2, v3])
 
     #integration parameters
-    duration, step = 100*yr, np.array([1./(365.25*2.), 1./(365.25*1.), 5./(365.25*1.)])*yr #integration time and step in years
+    duration, step = 100*yr/yr, np.array([1./(365.25*2.), 1./(365.25*1.), 5./(365.25*1.)])*yr/yr #integration time and step in years
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 2
@@ -52,7 +52,7 @@ def main():
 
     parameters = [duration, step, dyn_syst, integrator]
     display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
-    print(sma/au)
+    print(sma,ecc)
     return 0
 
 if __name__ == '__main__':
