@@ -101,7 +101,7 @@ class System(Body):
     def COMV(self): #return center of mass velocity in cartesian np_array
         coord = np.zeros(3)
         for body in self.bodylist:
-            coord = coord + body.v
+            coord = coord + body.m*body.v
         coord = coord/self.M
         return coord
 
@@ -113,25 +113,15 @@ class System(Body):
     @property
     def LCOM(self): #return angular momentum of the center of mass
         LCOM = np.zeros(3)
-        dr = np.zeros(3)
-        dv = np.zeros(3)
-        for body in self.bodylist:
-            for otherbody in self.bodylist:
-                if body != otherbody:
-                    dr = body.q-otherbody.q
-                    dv = body.v-otherbody.v
+        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
+        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
         LCOM = self.mu*np.cross(dr,dv)
         return LCOM
 
     @property
     def ECOM(self): #return mechanical energy of the center of mass
-        dr = np.zeros(3)
-        dv = np.zeros(3)
-        for body in self.bodylist:
-            for otherbody in self.bodylist:
-                if body != otherbody:
-                    dr = body.q-otherbody.q
-                    dv = body.v-otherbody.v
+        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
+        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
         ECOM = self.mu/2.*np.linalg.norm(dv)**2 - Ga*self.M*self.mu/np.linalg.norm(dr)
         return ECOM
 

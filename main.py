@@ -16,33 +16,33 @@ def main():
     e = np.array([0., 0., 1./4.])   # Eccentricity
     psi = np.array([0., 0., 0.])*np.pi/180.    # Inclination of the orbital plane in degrees
 
-    x1 = np.array([0., -1., 0.])*a[0]
-    x2 = np.array([0., 1., 0.])*a[1]
-    x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])])*a[2]
+    x1 = np.array([0., -1., 0.])*a[0]*(1.+e[0])
+    x2 = np.array([0., 1., 0.])*a[1]*(1.+e[1])
+    x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])])*a[2]*(1.+e[2])
     q = np.array([x1, x2, x3])
 
-    v1 = np.array([np.sqrt(Ga*m[1]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
-    v2 = np.array([-np.sqrt(Ga*m[0]**2/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
+    v1 = np.array([np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
+    v2 = np.array([-np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
     v3 = np.array([0., np.sqrt(Ga*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.])
     v = np.array([v1, v2, v3])
 
     #integration parameters
     duration, step = 100*yr/yr, np.array([1./(365.25*2.), 1./(365.25*1.), 5./(365.25*1.)])*yr/yr #integration time and step in years
-    step = np.sort(step)[::-1]
+    step = np.sort(step)
     integrator = "leapfrog"
-    n_bodies = 2
-    display = True
-    savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
+    n_bodies = 3
+    display = False
+    savename = "{0:d}bodies_mass_{1:s}".format(n_bodies, integrator)
 
     #simulation start
-    bodylist = []
-    for i in range(n_bodies):
-        bodylist.append(Body(m[i], q[i], v[i]))
-    bin_syst = System(bodylist[0:2])
-    dyn_syst = System(bodylist, main=True)
-
     E, L = [], []
     for i,step0 in enumerate(step):
+        bodylist = []
+        for j in range(n_bodies):
+            bodylist.append(Body(m[j], q[j], v[j]))
+        bin_syst = System(bodylist[0:2])
+        dyn_syst = System(bodylist, main=True)
+
         if i != 0:
             display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
