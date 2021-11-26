@@ -82,6 +82,14 @@ class System(Body):
         return mass
 
     @property
+    def mu(self):
+        prod = 1
+        for body in self.bodylist:
+            prod = prod * body.m
+        mu = prod/self.M
+        return mu
+
+    @property
     def COM(self): #return center of mass in cartesian np_array
         coord = np.zeros(3)
         for body in self.bodylist:
@@ -101,6 +109,31 @@ class System(Body):
         for body in self.bodylist:
             body.q = body.q - self.COM
             body.v = body.v - self.COMV
+
+    @property
+    def LCOM(self): #return angular momentum of the center of mass
+        LCOM = np.zeros(3)
+        dr = np.zeros(3)
+        dv = np.zeros(3)
+        for body in self.bodylist:
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    dr = body.q-otherbody.q
+                    dv = body.v-otherbody.v
+        LCOM = self.mu*np.cross(dr,dv)
+        return LCOM
+
+    @property
+    def ECOM(self): #return mechanical energy of the center of mass
+        dr = np.zeros(3)
+        dv = np.zeros(3)
+        for body in self.bodylist:
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    dr = body.q-otherbody.q
+                    dv = body.v-otherbody.v
+        ECOM = self.mu/2.*np.linalg.norm(dv)**2 - Ga*self.M*self.mu/np.linalg.norm(dr)
+        return ECOM
 
     @property
     def L(self): #return angular momentum of bodies in system
@@ -123,17 +156,9 @@ class System(Body):
         return E
          
     @property
-    def mu(self):
-        prod = 1
-        for body in self.bodylist:
-            prod = prod * body.m
-        mu = prod/self.M
-        return mu
-
-    @property
     def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
-            ecc = (2.*self.E*(np.linalg.norm(self.L)**2))/((Ga**2)*(self.M**2)*(self.mu**3)) + 1.
+            ecc = (2.*self.ECOM*(np.linalg.norm(self.LCOM)**2))/((Ga**2)*(self.M**2)*(self.mu**3)) + 1.
         else :
             ecc = np.nan
         return ecc
@@ -141,7 +166,7 @@ class System(Body):
     @property
     def sma(self): #semi major axis of two body sub system
         if len(self.bodylist) == 2 :
-            sma = -Ga*self.M*self.mu/(2.*self.E)
+            sma = -Ga*self.M*self.mu/(2.*self.ECOM)
         else :
             sma = np.nan
         return sma

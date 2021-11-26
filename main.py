@@ -31,7 +31,7 @@ def main():
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 2
-    display = False
+    display = True
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
@@ -42,7 +42,9 @@ def main():
     dyn_syst = System(bodylist, main=True)
 
     E, L = [], []
-    for step0 in step:
+    for i,step0 in enumerate(step):
+        if i != 0:
+            display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
             E0, L0, sma, ecc = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename)
         elif integrator.lower() in ['hermite','herm']:
@@ -52,7 +54,6 @@ def main():
 
     parameters = [duration, step, dyn_syst, integrator]
     display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
-    print(sma,ecc)
     return 0
 
 if __name__ == '__main__':

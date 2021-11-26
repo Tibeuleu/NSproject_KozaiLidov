@@ -55,7 +55,7 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
         sma[j] = bin_syst.sma
         ecc[j] = bin_syst.ecc
 
-        if display and j % 50 == 0:
+        if display and j % 10 == 0:
             # display progression
             if len(dyn_syst.bodylist) == 1:
                 d.on_running(dyn_syst, step=j, label="step {0:d}/{1:d}".format(j, N))

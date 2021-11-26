@@ -75,12 +75,12 @@ class DynamicUpdate():
 
     def on_running(self, dyn_syst, step=None, label=None):
         xdata, ydata, zdata = dyn_syst.get_positions
-        values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))/au
+        values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
         #Update data (with the new _and_ the old points)
         for i,body in enumerate(dyn_syst.bodylist):
-            x, y, z = body.q/au
+            x, y, z = body.q
             self.lines[i].set_data_3d([x], [y], [z])
         if not label is None:
             if self.blackstyle:
@@ -94,7 +94,7 @@ class DynamicUpdate():
         #We need to draw *and* flush
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
-        if not step is None and step%100==0:
+        if not step is None and step%50==0:
             self.fig.savefig("tmp/{0:06d}.png".format(step),bbox_inches="tight")
     
     def close(self):
