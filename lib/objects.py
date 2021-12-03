@@ -14,12 +14,12 @@ class Body:
         self.m = mass
         self.q = position
         self.v = velocity
-        self.a = np.zeros(3)
-        self.ap = np.zeros(3)
-        self.j = np.zeros(3)
-        self.jp = np.zeros(3)
-        self.qp = np.zeros(3)
-        self.vp = np.zeros(3)
+        self.a = np.zeros(3,dtype=np.longdouble)
+        self.ap = np.zeros(3,dtype=np.longdouble)
+        self.j = np.zeros(3,dtype=np.longdouble)
+        self.jp = np.zeros(3,dtype=np.longdouble)
+        self.qp = np.zeros(3,dtype=np.longdouble)
+        self.vp = np.zeros(3,dtype=np.longdouble)
 
     def __repr__(self): # Called upon "print(body)"
         return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m, self.q, self.v)
@@ -51,27 +51,27 @@ class System(Body):
 
     @property
     def get_masses(self): #return the masses of each object
-        return np.array([body.m for body in self.bodylist])
+        return np.array([body.m for body in self.bodylist],dtype=np.longdouble)
     
     @property
     def get_positions(self): #return the positions of the bodies
-        xdata = np.array([body.q[0] for body in self.bodylist])
-        ydata = np.array([body.q[1] for body in self.bodylist])
-        zdata = np.array([body.q[2] for body in self.bodylist])
+        xdata = np.array([body.q[0] for body in self.bodylist],dtype=np.longdouble)
+        ydata = np.array([body.q[1] for body in self.bodylist],dtype=np.longdouble)
+        zdata = np.array([body.q[2] for body in self.bodylist],dtype=np.longdouble)
         return xdata, ydata, zdata
     
     @property
     def get_velocities(self): #return the positions of the bodies
-        vxdata = np.array([body.v[0] for body in self.bodylist])
-        vydata = np.array([body.v[1] for body in self.bodylist])
-        vzdata = np.array([body.v[2] for body in self.bodylist])
+        vxdata = np.array([body.v[0] for body in self.bodylist],dtype=np.longdouble)
+        vydata = np.array([body.v[1] for body in self.bodylist],dtype=np.longdouble)
+        vzdata = np.array([body.v[2] for body in self.bodylist],dtype=np.longdouble)
         return vxdata, vydata, vzdata
     
     @property
     def get_momenta(self): #return the momenta of the bodies
-        pxdata = np.array([body.p[0] for body in self.bodylist])
-        pydata = np.array([body.p[1] for body in self.bodylist])
-        pzdata = np.array([body.p[2] for body in self.bodylist])
+        pxdata = np.array([body.p[0] for body in self.bodylist],dtype=np.longdouble)
+        pydata = np.array([body.p[1] for body in self.bodylist],dtype=np.longdouble)
+        pzdata = np.array([body.p[2] for body in self.bodylist],dtype=np.longdouble)
         return pxdata, pydata, pzdata
 
     @property
@@ -91,7 +91,7 @@ class System(Body):
 
     @property
     def COM(self): #return center of mass in cartesian np_array
-        coord = np.zeros(3)
+        coord = np.zeros(3,dtype=np.longdouble)
         for body in self.bodylist:
             coord = coord + body.m*body.q
         coord = coord/self.M
@@ -99,7 +99,7 @@ class System(Body):
 
     @property
     def COMV(self): #return center of mass velocity in cartesian np_array
-        coord = np.zeros(3)
+        coord = np.zeros(3,dtype=np.longdouble)
         for body in self.bodylist:
             coord = coord + body.m*body.v
         coord = coord/self.M
@@ -112,7 +112,7 @@ class System(Body):
 
     @property
     def LCOM(self): #return angular momentum of the center of mass
-        LCOM = np.zeros(3)
+        LCOM = np.zeros(3,dtype=np.longdouble)
         dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
         dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
         LCOM = self.mu*np.cross(dr,dv)
@@ -127,7 +127,7 @@ class System(Body):
 
     @property
     def L(self): #return angular momentum of bodies in system
-        L = np.zeros(3)
+        L = np.zeros(3,dtype=np.longdouble)
         for body in self.bodylist:
             L = L + np.cross(body.q,body.p)
         return L

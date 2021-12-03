@@ -11,28 +11,28 @@ from lib.units import *
 
 def main():
     #initialisation
-    m = np.array([1., 1., 1e-5])*Ms/Ms  # Masses in Solar mass
-    a = np.array([1., 1., 5.])*au/au   # Semi-major axis in astronomical units
-    e = np.array([0., 0., 1./4.])   # Eccentricity
-    psi = np.array([0., 0., 0.])*np.pi/180.    # Inclination of the orbital plane in degrees
+    m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms/Ms  # Masses in Solar mass
+    a = np.array([1., 1., 5.],dtype=np.longdouble)*au/au   # Semi-major axis in astronomical units
+    e = np.array([0., 0., 0.],dtype=np.longdouble)   # Eccentricity
+    psi = np.array([0., 0., 0.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
-    x1 = np.array([0., -1., 0.])*a[0]*(1.+e[0])
-    x2 = np.array([0., 1., 0.])*a[1]*(1.+e[1])
-    x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])])*a[2]*(1.+e[2])
-    q = np.array([x1, x2, x3])
+    x1 = np.array([0., -1., 0.],dtype=np.longdouble)*a[0]*(1.+e[0])
+    x2 = np.array([0., 1., 0.],dtype=np.longdouble)*a[1]*(1.+e[1])
+    x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])],dtype=np.longdouble)*a[2]*(1.+e[2])
+    q = np.array([x1, x2, x3],dtype=np.longdouble)
 
-    v1 = np.array([np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
-    v2 = np.array([-np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.])
-    v3 = np.array([0., np.sqrt(Ga*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.])
-    v = np.array([v1, v2, v3])
+    v1 = np.array([np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.],dtype=np.longdouble)
+    v2 = np.array([-np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.],dtype=np.longdouble)
+    v3 = np.array([0., np.sqrt(Ga*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.],dtype=np.longdouble)
+    v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 100*yr/yr, np.array([1./(365.25*2.), 1./(365.25*1.), 5./(365.25*1.)])*yr/yr #integration time and step in years
-    step = np.sort(step)
-    integrator = "leapfrog"
+    duration, step = 100*yr/yr, np.array([1./(365.25*2.), 1./(365.25*1.), 5./(365.25*1.)],dtype=np.longdouble)*yr/yr #integration time and step in years
+    step = np.sort(step)[::-1]
+    integrator = "hermite"
     n_bodies = 3
     display = False
-    savename = "{0:d}bodies_mass_{1:s}".format(n_bodies, integrator)
+    savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
     E, L = [], []

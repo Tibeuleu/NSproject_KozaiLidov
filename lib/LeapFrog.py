@@ -18,7 +18,7 @@ def Drift(dyn_syst, dt):
 
 def Kick(dyn_syst, dt):
     for body in dyn_syst.bodylist:
-        body.a = np.zeros(3)
+        body.a = np.zeros(3,dtype=np.longdouble)
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
                 rij = np.linalg.norm(body.q - otherbody.q)
@@ -43,10 +43,10 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
         d.launch(dyn_syst.blackstyle)
 
     N = np.ceil(duration / dt).astype(int)
-    E = np.zeros(N)
-    L = np.zeros((N, 3))
-    sma = np.zeros(N)
-    ecc = np.zeros(N)
+    E = np.zeros(N,dtype=np.longdouble)
+    L = np.zeros((N, 3),dtype=np.longdouble)
+    sma = np.zeros(N,dtype=np.longdouble)
+    ecc = np.zeros(N,dtype=np.longdouble)
     for j in range(N):
         LP(dyn_syst,dt)
 
@@ -58,9 +58,9 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
         if display and j % 10 == 0:
             # display progression
             if len(dyn_syst.bodylist) == 1:
-                d.on_running(dyn_syst, step=j, label="step {0:d}/{1:d}".format(j, N))
+                d.on_running(dyn_syst, step=j, label="{0:.2f} years".format(j*dt))
             else:
-                d.on_running(dyn_syst, step=j, label="step {0:d}/{1:d}".format(j, N))
+                d.on_running(dyn_syst, step=j, label="{0:.2f} years".format(j*dt))
     if display:
         d.close()
         if not savename is None:
