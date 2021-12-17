@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 from sys import exit as sysexit
+from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from lib.objects import Body, System
 from lib.LeapFrog import leapfrog
 from lib.hermite import hermite
@@ -27,31 +29,37 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 100*yr, np.array([60.],dtype=np.longdouble) #integration time and step in seconds
+    duration, step = 100*yr, np.array([1./(365.25*24.), 12./(365.25*24.), 24./(365.25*24.)],dtype=np.longdouble)*yr #integration time and step in seconds
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 3
     display = False
-    savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
+    savename = "{0:d}bodies_conc_{1:s}".format(n_bodies, integrator)
 
+    bodies, bodysyst = [],[]
+    for j in range(n_bodies):
+        bodies.append(Body(m[j], q[j], v[j]))
+    bin_syst = System(bodies[0:2])
+    dyn_syst = System(bodies, main=True)
+    bodysyst = [[deepcopy(bin_syst), deepcopy(dyn_syst)] for _ in range(n_bodies)]
     #simulation start
-    E, L = [], []
+    exe = ProcessPoolExecutor()
+    future_ELae = []
     for i,step0 in enumerate(step):
-        bodylist = []
-        for j in range(n_bodies):
-            bodylist.append(Body(m[j], q[j], v[j]))
-        bin_syst = System(bodylist[0:2])
-        dyn_syst = System(bodylist, main=True)
-
         if i != 0:
             display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0, sma, ecc = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename)
+            future_ELae.append(exe.submit(leapfrog, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename))
         elif integrator.lower() in ['hermite','herm']:
-            E0, L0, sma, ecc = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename)
+            future_ELae.append(exe.submit(hermite, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename))
+    
+    E, L, sma, ecc = [], [], [], []
+    for future in future_ELae:
+        E0, L0, sma0, ecc0 = future.result()
         E.append(E0)
         L.append(L0)
-
+        sma.append(sma0)
+        ecc.append(ecc0)
     parameters = [duration, step, dyn_syst, integrator]
     display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
     return 0
