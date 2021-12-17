@@ -134,9 +134,8 @@ def display_parameters(E,L,sma,ecc,parameters,savename=""):
 
     fig3 = plt.figure(figsize=(15,7))
     ax3 = fig3.add_subplot(111)
-    for i in range(len(L)):
-        ax3.plot(np.arange(sma[i].shape[0])*step[i]/yr, sma[i], label="a (step of {0:.2e}s)".format(step[i]))
-        ax3.plot(np.arange(ecc[i].shape[0])*step[i]/yr, ecc[i], label="e (step of {0:.2e}s)".format(step[i]))
+    ax3.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[i], label="a (step of {0:.2e}s)".format(step[-1]))
+    ax3.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[i], label="e (step of {0:.2e}s)".format(step[-1]))
     ax3.set(xlabel=r"$t \, [yr]$", ylabel=r"$a \, [au] \, or \, e$")
     ax3.legend()
     fig3.suptitle("Semi major axis and eccentricity "+title2)
