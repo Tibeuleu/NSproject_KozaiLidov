@@ -74,7 +74,7 @@ class DynamicUpdate():
             self.ax.set_zlabel('AU')
 
     def on_running(self, dyn_syst, step=None, label=None):
-        xdata, ydata, zdata = dyn_syst.get_positions
+        xdata, ydata, zdata = dyn_syst.get_positions()
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()

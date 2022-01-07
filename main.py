@@ -14,7 +14,7 @@ def main():
     m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms/Ms  # Masses in Solar mass
     a = np.array([1., 1., 5.],dtype=np.longdouble)*au/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 0.],dtype=np.longdouble)   # Eccentricity
-    psi = np.array([0., 0., 0.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
+    psi = np.array([0., 0., 45.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
     x1 = np.array([0., -1., 0.],dtype=np.longdouble)*a[0]*(1.+e[0])
     x2 = np.array([0., 1., 0.],dtype=np.longdouble)*a[1]*(1.+e[1])
@@ -27,16 +27,16 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 100*yr, np.array([60.],dtype=np.longdouble) #integration time and step in seconds
+    duration, step = 10*yr, np.array([60000.],dtype=np.longdouble) #integration time and step in seconds
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 3
-    display = False
+    display = True
     gif = False
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
-    E, L = [], []
+    E, L, ecc, sma = [], [], [], []
     for i,step0 in enumerate(step):
         bodylist = []
         for j in range(n_bodies):
@@ -47,11 +47,13 @@ def main():
         if i != 0:
             display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0, sma, ecc = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
+            E0, L0, sma0, ecc0 = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         elif integrator.lower() in ['hermite','herm']:
-            E0, L0, sma, ecc = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
+            E0, L0, sma0, ecc0 = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         E.append(E0)
         L.append(L0)
+        ecc.append(ecc0)
+        sma.append(sma0)
 
     parameters = [duration, step, dyn_syst, integrator]
     display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)

@@ -14,6 +14,8 @@ class Body:
         self.m = mass
         self.q = position
         self.v = velocity
+        self.qb = position
+        self.vb = velocity
         self.a = np.zeros(3,dtype=np.longdouble)
         self.ap = np.zeros(3,dtype=np.longdouble)
         self.j = np.zeros(3,dtype=np.longdouble)
@@ -30,6 +32,10 @@ class Body:
     @property
     def p(self):
         return self.v*self.m
+
+    @property
+    def pb(self):
+        return self.vb*self.m
 
 class System(Body):
 
@@ -49,25 +55,25 @@ class System(Body):
     def __str__(self):  # Called upon "str(system)"
         return str([str(body) for body in self.bodylist])
 
-    @property
+
     def get_masses(self): #return the masses of each object
         return np.array([body.m for body in self.bodylist],dtype=np.longdouble)
-    
-    @property
+
+
     def get_positions(self): #return the positions of the bodies
         xdata = np.array([body.q[0] for body in self.bodylist],dtype=np.longdouble)
         ydata = np.array([body.q[1] for body in self.bodylist],dtype=np.longdouble)
         zdata = np.array([body.q[2] for body in self.bodylist],dtype=np.longdouble)
         return xdata, ydata, zdata
-    
-    @property
+
+
     def get_velocities(self): #return the positions of the bodies
         vxdata = np.array([body.v[0] for body in self.bodylist],dtype=np.longdouble)
         vydata = np.array([body.v[1] for body in self.bodylist],dtype=np.longdouble)
         vzdata = np.array([body.v[2] for body in self.bodylist],dtype=np.longdouble)
         return vxdata, vydata, vzdata
-    
-    @property
+
+
     def get_momenta(self): #return the momenta of the bodies
         pxdata = np.array([body.p[0] for body in self.bodylist],dtype=np.longdouble)
         pydata = np.array([body.p[1] for body in self.bodylist],dtype=np.longdouble)
@@ -106,9 +112,40 @@ class System(Body):
         return coord
 
     def COMShift(self): #Shift coordinates of bodies in system to COM frame and set COM at rest
+        COM = self.COM
+        COMV = self.COMV
         for body in self.bodylist:
-            body.q = body.q - self.COM
-            body.v = body.v - self.COMV
+            body.q = body.q - COM
+            body.v = body.v - COMV
+
+    def COMShiftBin(self): #Shift coordinates of inner binary system to COM frame and set COM at rest
+        COM = self.COM
+        COMV = self.COMV
+        for body in self.bodylist:
+            body.qb = body.qb - COM
+            body.vb = body.vb - COMV
+
+    @property
+    def LBIN(self): #return angular momentum of inner binary
+        self.COMShiftBin()
+        L = np.zeros(3,dtype=np.longdouble)
+        for body in self.bodylist:
+            L = L + np.cross(body.qb,body.pb)
+        return L
+
+    @property
+    def EBIN(self): #return total energy of inner binary
+        self.COMShiftBin()
+        T = 0
+        W = 0
+        for body in self.bodylist:
+            T = T + 1./2.*body.m*np.linalg.norm(body.vb)**2
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.qb-otherbody.qb)
+                    W = W - Ga*body.m*otherbody.m/rij
+        E = T + W
+        return E
 
     @property
     def LCOM(self): #return angular momentum of the center of mass
@@ -116,6 +153,9 @@ class System(Body):
         dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
         dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
         LCOM = self.mu*np.cross(dr,dv)
+
+        LCOM = self.L
+
         return LCOM
 
     @property
@@ -123,6 +163,9 @@ class System(Body):
         dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
         dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
         ECOM = self.mu/2.*np.linalg.norm(dv)**2 - Ga*self.M*self.mu/np.linalg.norm(dr)
+
+        ECOM = self.E
+
         return ECOM
 
     @property
@@ -148,7 +191,7 @@ class System(Body):
     @property
     def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
-            ecc = (2.*self.ECOM*(np.linalg.norm(self.LCOM)**2))/((Ga**2)*(self.M**2)*(self.mu**3)) + 1.
+            ecc = (2.*self.EBIN*(np.linalg.norm(self.LBIN)**2))/((Ga**2)*(self.M**2)*(self.mu**3)) + 1.
         else :
             ecc = np.nan
         return ecc
@@ -156,7 +199,7 @@ class System(Body):
     @property
     def sma(self): #semi major axis of two body sub system
         if len(self.bodylist) == 2 :
-            sma = -Ga*self.M*self.mu/(2.*self.ECOM)
+            sma = -Ga*self.M*self.mu/(2.*self.EBIN)
         else :
             sma = np.nan
         return sma
