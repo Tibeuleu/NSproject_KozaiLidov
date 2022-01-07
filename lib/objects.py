@@ -106,9 +106,11 @@ class System(Body):
         return coord
 
     def COMShift(self): #Shift coordinates of bodies in system to COM frame and set COM at rest
+        COM = self.COM
+        COMV = self.COMV
         for body in self.bodylist:
-            body.q = body.q - self.COM
-            body.v = body.v - self.COMV
+            body.q = body.q - COM
+            body.v = body.v - COMV
 
     @property
     def LCOM(self): #return angular momentum of the center of mass
