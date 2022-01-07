@@ -33,7 +33,7 @@ def LP(dyn_syst, dt):
     Drift(dyn_syst, dt / 2)
     dyn_syst.time = dyn_syst.time + dt
 
-def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None):
+def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None, gif=False):
     if display:
         try:
             system("mkdir tmp")
@@ -56,11 +56,15 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
         ecc[j] = bin_syst.ecc
 
         if display and j % 10 == 0:
+            if gif:
+                step = j
+            else:
+                step = None
             # display progression
             if len(dyn_syst.bodylist) == 1:
-                d.on_running(dyn_syst, step=j, label="{0:.2f} years".format(j*dt/yr))
+                d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
             else:
-                d.on_running(dyn_syst, step=j, label="{0:.2f} years".format(j*dt/yr))
+                d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
     if display:
         d.close()
         if not savename is None:

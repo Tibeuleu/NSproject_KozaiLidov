@@ -79,7 +79,7 @@ def HPC(dyn_syst, dt):  # update position and velocities of bodies in system wit
     dyn_syst.time = dyn_syst.time + dt
 
 
-def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None):
+def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None, gif=False):
     if display:
         try:
             system("mkdir tmp")
@@ -103,11 +103,15 @@ def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False
         ecc[j] = bin_syst.ecc
 
         if display and j % 10 == 0:
+            if gif:
+                step = j
+            else:
+                step = None
             # display progression
             if len(dyn_syst.bodylist) == 1:
-                d.on_running(dyn_syst, step=j, label="{0:.2f} yearq".format(j*dt))
+                d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
             else:
-                d.on_running(dyn_syst, step=j, label="{0:.2f} years".format(j*dt))
+                d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
     if display:
         d.close()
         if not savename is None:

@@ -33,7 +33,8 @@ def main():
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 3
-    display = False
+    display = True
+    gif = False
     savename = "{0:d}bodies_psi45_{1:s}".format(n_bodies, integrator)
 
     bodies, bodysyst = [],[]
@@ -50,9 +51,9 @@ def main():
         if i != 0:
             display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            future_ELae.append(exe.submit(leapfrog, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename))
+            future_ELae.append(exe.submit(leapfrog, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename, gif=gif))
         elif integrator.lower() in ['hermite','herm']:
-            future_ELae.append(exe.submit(hermite, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename))
+            future_ELae.append(exe.submit(hermite, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename, gif=gif))
     
     E, L, sma, ecc = [], [], [], []
     for future in future_ELae:
