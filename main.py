@@ -47,9 +47,9 @@ def main():
         if i != 0:
             display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0, sma, ecc = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
+            E0, L0, sma0, ecc0 = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         elif integrator.lower() in ['hermite','herm']:
-            E0, L0, sma, ecc = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
+            E0, L0, sma0, ecc0 = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         E.append(E0)
         L.append(L0)
         sma.append(sma0)
