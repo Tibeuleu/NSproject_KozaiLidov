@@ -114,7 +114,7 @@ def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False
                 d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
     if display:
         d.close()
-        if not savename is None:
+        if gif:
             system("convert -delay 5 -loop 0 tmp/??????.png tmp/temp.gif && rm tmp/??????.png")
             system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/{0:s}_dynsyst.gif".format(savename))
 
