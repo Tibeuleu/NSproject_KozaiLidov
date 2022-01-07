@@ -36,7 +36,7 @@ def main():
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
-    E, L = [], []
+    E, L, sma, ecc = [], [], [], []
     for i,step0 in enumerate(step):
         bodylist = []
         for j in range(n_bodies):
@@ -52,7 +52,9 @@ def main():
             E0, L0, sma, ecc = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         E.append(E0)
         L.append(L0)
-
+        sma.append(sma0)
+        ecc.append(ecc0)
+    
     parameters = [duration, step, dyn_syst, integrator]
     display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
     return 0
