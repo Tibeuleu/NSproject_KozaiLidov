@@ -50,6 +50,7 @@ class System(Body):
         self.m = self.M
         self.q = self.COM
         self.v = self.COMV
+        self.coordarray = []
 
     def __repr__(self):  # Called upon "print(system)"
         return str([print(body) for body in self.bodylist])
@@ -189,7 +190,11 @@ class System(Body):
                     W = W - Ga*body.m*otherbody.m/rij
         E = T + W
         return E
-         
+
+
+
+
+
     @property
     def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
@@ -206,10 +211,25 @@ class System(Body):
             sma = np.nan
         return sma
 
-    def phi(self,body1,body2): #return angle in degree between plans formed by body1 and body2 trajectories
-        n1 = np.cross(body1.q,body1.v)
-        n2 = np.cross(body2.q, body2.v)
-        phi = np.arccos(np.dot(n1, n2) / (np.linalg.norm(n1) * np.linalg.norm(n2)))
-        phi = Angle(phi, u.radian)
-        phi = phi.dec
+    @property
+    def phi(self,body1,body2): #return angle in degree between plans formed by body1 and body2 (perurbator) trajectories
+        if len(self.bodylist) == 2 :
+            body1 = self.bodylist[0]
+            body2 = self.bodylist[2]
+            n1 = np.cross(body1.q, body1.v)
+            n2 = np.cross(body2.q, body2.v)
+            phi = np.arccos(np.dot(n1, n2) / (np.linalg.norm(n1) * np.linalg.norm(n2)))
+            phi = Angle(phi, u.radian)
+            phi = phi.dec
+        else :
+            phi = np.nan
         return phi
+"""""
+    def update_coordarray(self): #add current positions of bodies in system in coordarray array.
+        sub_array = []
+        for body in self.bodylist:
+            sub_array.append(body.q)
+        self.coordarray.append(sub_array)
+
+    def orbital_analysis(self): #derive semi major axis and eccentricity evolution.
+"""""
