@@ -47,6 +47,7 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
     L = np.zeros((N, 3),dtype=np.longdouble)
     sma = np.zeros(N,dtype=np.longdouble)
     ecc = np.zeros(N,dtype=np.longdouble)
+    phi = np.zeros(N,dtype=np.longdouble)
     for j in range(N):
         LP(dyn_syst,dt)
 
@@ -54,6 +55,7 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
         L[j] = dyn_syst.L
         sma[j] = bin_syst.sma
         ecc[j] = bin_syst.ecc
+        phi[j] = dyn_syst.phi
 
         if display and j % 10 == 0:
             if gif:
@@ -72,4 +74,4 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
             system("convert tmp/temp.gif -fuzz 10% -layers Optimize plots/{0:s}_dynsyst.gif".format(savename))
 
     if recover_param:
-        return E, L, sma, ecc
+        return E, L, sma, ecc, phi

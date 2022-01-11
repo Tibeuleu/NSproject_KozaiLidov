@@ -101,7 +101,7 @@ class DynamicUpdate():
         plt.close()
 
 
-def display_parameters(E,L,sma,ecc,parameters,savename=""):
+def display_parameters(E,L,sma,ecc,phi,parameters,savename=""):
     """
     """
     if savename != "":
@@ -149,6 +149,15 @@ def display_parameters(E,L,sma,ecc,parameters,savename=""):
     ax4.legend()
     fig4.suptitle("Mechanical energy of the whole system "+title2)
     fig4.savefig("plots/{0:s}E.png".format(savename),bbox_inches="tight")
+    
+    fig5 = plt.figure(figsize=(15,7))
+    ax5 = fig5.add_subplot(111)
+    for i in range(len(phi)):
+        ax5.plot(np.arange(phi[i].shape[0])*step[-1]/yr, phi[i], label="step of {0:.2e}s".format(step[i]))
+    ax5.set(xlabel=r"$t \, [yr]$", ylabel=r"$\phi \, [^{\circ}]$")
+    ax5.legend()
+    fig5.suptitle("Inclination angle of the perturbator's orbital plane "+title2)
+    fig5.savefig("plots/{0:s}phi.png".format(savename),bbox_inches="tight")
     
     plt.show(block=True)
   

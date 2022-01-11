@@ -31,12 +31,12 @@ def main():
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 3
-    display = True
+    display = False
     gif = False
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
 
     #simulation start
-    E, L, ecc, sma = [], [], [], []
+    E, L, ecc, sma, phi = [], [], [], [], []
     for i,step0 in enumerate(step):
         bodylist = []
         for j in range(n_bodies):
@@ -47,16 +47,17 @@ def main():
         if i != 0:
             display = False
         if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0, sma0, ecc0 = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
+            E0, L0, sma0, ecc0, phi0 = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         elif integrator.lower() in ['hermite','herm']:
-            E0, L0, sma0, ecc0 = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
+            E0, L0, sma0, ecc0, phi0 = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
         E.append(E0)
         L.append(L0)
         ecc.append(ecc0)
         sma.append(sma0)
+        phi.append(phi0)
 
     parameters = [duration, step, dyn_syst, integrator]
-    display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
+    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename)
     return 0
 
 if __name__ == '__main__':

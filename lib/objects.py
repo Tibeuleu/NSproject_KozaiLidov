@@ -5,8 +5,6 @@ Class definition for physical attribute
 """
 from os import system
 import numpy as np
-from astropy.coordinates import Angle
-from astropy import units as u
 from lib.plots import DynamicUpdate
 from lib.units import *
 
@@ -191,10 +189,6 @@ class System(Body):
         E = T + W
         return E
 
-
-
-
-
     @property
     def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
@@ -212,15 +206,13 @@ class System(Body):
         return sma
 
     @property
-    def phi(self,body1,body2): #return angle in degree between plans formed by body1 and body2 (perurbator) trajectories
+    def phi(self): #return angle in degree between plans formed by body1 and body2 (perurbator) trajectories
         if len(self.bodylist) == 3 :
             body1 = self.bodylist[0]
             body2 = self.bodylist[2]
             n1 = np.cross(body1.q, body1.v)
             n2 = np.cross(body2.q, body2.v)
-            phi = np.arccos(np.dot(n1, n2) / (np.linalg.norm(n1) * np.linalg.norm(n2)))
-            phi = Angle(phi, u.radian)
-            phi = phi.dec
+            phi = np.arccos(np.dot(n1, n2) / (np.linalg.norm(n1) * np.linalg.norm(n2)))*180./np.pi
         else :
             phi = np.nan
         return phi
