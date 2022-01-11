@@ -213,7 +213,7 @@ class System(Body):
 
     @property
     def phi(self,body1,body2): #return angle in degree between plans formed by body1 and body2 (perurbator) trajectories
-        if len(self.bodylist) == 2 :
+        if len(self.bodylist) == 3 :
             body1 = self.bodylist[0]
             body2 = self.bodylist[2]
             n1 = np.cross(body1.q, body1.v)
