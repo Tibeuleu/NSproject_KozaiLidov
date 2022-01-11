@@ -75,12 +75,12 @@ class DynamicUpdate():
 
     def on_running(self, dyn_syst, step=None, label=None):
         xdata, ydata, zdata = dyn_syst.get_positions()
-        values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))
+        values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))/au
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
         #Update data (with the new _and_ the old points)
         for i,body in enumerate(dyn_syst.bodylist):
-            x, y, z = body.q
+            x, y, z = body.q/au
             self.lines[i].set_data_3d([x], [y], [z])
         if not label is None:
             if self.blackstyle:
