@@ -14,7 +14,7 @@ def main():
     m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms/Ms  # Masses in Solar mass
     a = np.array([1., 1., 5.],dtype=np.longdouble)*au/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 0.],dtype=np.longdouble)   # Eccentricity
-    psi = np.array([0., 0., 45.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
+    psi = np.array([0., 0., 80.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
     x1 = np.array([0., -1., 0.],dtype=np.longdouble)*a[0]*(1.+e[0])
     x2 = np.array([0., 1., 0.],dtype=np.longdouble)*a[1]*(1.+e[1])
@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 10*yr, np.array([60000.],dtype=np.longdouble) #integration time and step in seconds
+    duration, step = 100*yr, np.array([600000.],dtype=np.longdouble) #integration time and step in seconds
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 3
