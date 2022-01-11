@@ -134,12 +134,21 @@ def display_parameters(E,L,sma,ecc,parameters,savename=""):
 
     fig3 = plt.figure(figsize=(15,7))
     ax3 = fig3.add_subplot(111)
-    ax3.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[i], label="a (step of {0:.2e}s)".format(step[-1]))
-    ax3.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[i], label="e (step of {0:.2e}s)".format(step[-1]))
+    ax3.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[-1], label="a (step of {0:.2e}s)".format(step[-1]))
+    ax3.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[-1], label="e (step of {0:.2e}s)".format(step[-1]))
     ax3.set(xlabel=r"$t \, [yr]$", ylabel=r"$a \, [au] \, or \, e$")
     ax3.legend()
     fig3.suptitle("Semi major axis and eccentricity "+title2)
     fig3.savefig("plots/{0:s}a_e.png".format(savename),bbox_inches="tight")
 
+    fig4 = plt.figure(figsize=(15,7))
+    ax4 = fig4.add_subplot(111)
+    for i in range(len(E)):
+        ax4.plot(np.arange(E[i].shape[0])*step[-1]/yr, E[i], label="step of {0:.2e}s".format(step[i]))
+    ax4.set(xlabel=r"$t \, [yr]$", ylabel=r"$E \, [J]$")
+    ax4.legend()
+    fig4.suptitle("Mechanical energy of the whole system "+title2)
+    fig4.savefig("plots/{0:s}E.png".format(savename),bbox_inches="tight")
+    
     plt.show(block=True)
   
