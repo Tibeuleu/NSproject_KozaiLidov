@@ -12,7 +12,7 @@ from lib.units import *
 def main():
     #initialisation
     m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms#/Ms  # Masses in Solar mass
-    a = np.array([1., 1., 10.],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
+    a = np.array([1., 1., 10.],dtype=np.longdouble)/2.*au#/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 0.25],dtype=np.longdouble)   # Eccentricity
     psi = np.array([0., 0., 60.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 1000*yr, np.array([10.*86400.],dtype=np.longdouble) #integration time and step in seconds
+    duration, step = 5000*yr, np.array([30.*86400.],dtype=np.longdouble) #integration time and step in seconds
     step = np.sort(step)[::-1]
     integrator = "leapfrog"
     n_bodies = 3
@@ -57,7 +57,8 @@ def main():
         phi.append(phi0)
 
     parameters = [duration, step, dyn_syst, integrator]
-    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename)
+    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename) #take the mean value of sma/ecc on given time interval (up to one period)
+    # np.convolve(sma, np.ones(int(period/step)))/int(period/step) -> moving average on the period duration
     return 0
 
 if __name__ == '__main__':

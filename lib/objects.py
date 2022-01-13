@@ -123,8 +123,8 @@ class System(Body):
         COM = self.COM
         COMV = self.COMV
         for body in self.bodylist:
-            body.qb = body.qb - COM
-            body.vb = body.vb - COMV
+            body.qb = body.q - COM
+            body.vb = body.v - COMV
 
     @property
     def LBIN(self): #return angular momentum of inner binary
@@ -149,23 +149,21 @@ class System(Body):
         return E
 
     @property
-    def LCOM(self): #return angular momentum of the center of mass
+    def LCOM(self): #return angular momentum in the center of mass of a binary system
+        #self.COMShiftBin()
         LCOM = np.zeros(3,dtype=np.longdouble)
-        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
-        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
+        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q#b
+        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v#b
         LCOM = self.mu*np.cross(dr,dv)
-
-        LCOM = self.L
 
         return LCOM
 
     @property
-    def ECOM(self): #return mechanical energy of the center of mass
-        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q
-        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v
+    def ECOM(self): #return mechanical energy in the center of mass of a binary system
+        #self.COMShiftBin()
+        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q#b
+        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v#b
         ECOM = self.mu/2.*np.linalg.norm(dv)**2 - Ga*self.M*self.mu/np.linalg.norm(dr)
-
-        ECOM = self.E
 
         return ECOM
 
@@ -188,6 +186,22 @@ class System(Body):
                     W = W - Ga*body.m*otherbody.m/rij
         E = T + W
         return E
+
+    @property
+    def eccCOM(self): #exentricity of two body sub system
+        if len(self.bodylist) == 2 :
+            ecc = (2.*self.ECOM*(np.linalg.norm(self.LCOM)**2))/((Ga**2)*(self.M**2)*(self.mu**3)) + 1.
+        else :
+            ecc = np.nan
+        return ecc
+
+    @property
+    def smaCOM(self): #semi major axis of two body sub system
+        if len(self.bodylist) == 2 :
+            sma = -Ga*self.M*self.mu/(2.*self.ECOM)
+        else :
+            sma = np.nan
+        return sma
 
     @property
     def ecc(self): #exentricity of two body sub system

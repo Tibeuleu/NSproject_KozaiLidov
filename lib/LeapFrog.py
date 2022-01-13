@@ -53,8 +53,8 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
 
         E[j] = dyn_syst.E
         L[j] = dyn_syst.L
-        sma[j] = bin_syst.sma
-        ecc[j] = bin_syst.ecc
+        sma[j] = bin_syst.smaCOM
+        ecc[j] = bin_syst.eccCOM
         phi[j] = dyn_syst.phi
 
         if display and j % 10 == 0:
