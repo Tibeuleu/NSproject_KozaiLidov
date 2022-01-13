@@ -27,7 +27,6 @@ def Kick(dyn_syst, dt):
 
 
 def LP(dyn_syst, dt):
-    dyn_syst.COMShift()
     Drift(dyn_syst, dt / 2)
     Kick(dyn_syst, dt)
     Drift(dyn_syst, dt / 2)
@@ -43,16 +42,23 @@ def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=Fals
         d.launch(dyn_syst.blackstyle)
 
     N = np.ceil(duration / dt).astype(int)
-    E = np.zeros(N,dtype=np.longdouble)
-    L = np.zeros((N, 3),dtype=np.longdouble)
-    sma = np.zeros(N,dtype=np.longdouble)
-    ecc = np.zeros(N,dtype=np.longdouble)
-    phi = np.zeros(N,dtype=np.longdouble)
-    for j in range(N):
+    E = np.zeros(N+1,dtype=np.longdouble)
+    L = np.zeros((N+1, 3),dtype=np.longdouble)
+    sma = np.zeros(N+1,dtype=np.longdouble)
+    ecc = np.zeros(N+1,dtype=np.longdouble)
+    phi = np.zeros(N+1,dtype=np.longdouble)
+
+    E[0] = dyn_syst.ECOM
+    L[0] = dyn_syst.LCOM
+    sma[0] = bin_syst.smaCOM
+    ecc[0] = bin_syst.eccCOM
+    phi[0] = dyn_syst.phi
+
+    for j in range(1,N+1):
         LP(dyn_syst,dt)
 
-        E[j] = dyn_syst.E
-        L[j] = dyn_syst.L
+        E[j] = dyn_syst.ECOM
+        L[j] = dyn_syst.LCOM
         sma[j] = bin_syst.smaCOM
         ecc[j] = bin_syst.eccCOM
         phi[j] = dyn_syst.phi

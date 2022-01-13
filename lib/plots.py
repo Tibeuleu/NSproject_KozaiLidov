@@ -53,7 +53,7 @@ class DynamicUpdate():
 
         self.lines = []
         for i,body in enumerate(self.dyn_syst.bodylist):
-            x, y, z = body.q
+            x, y, z = body.q/au-self.dyn_syst.COM/au
             lines, = self.ax.plot([x],[y],[z],'o',color="C{0:d}".format(i),label="{0:s}".format(str(body)))
             self.lines.append(lines)
         self.lines = np.array(self.lines)
@@ -74,7 +74,7 @@ class DynamicUpdate():
             self.ax.set_zlabel('AU')
 
     def on_running(self, dyn_syst, step=None, label=None):
-        xdata, ydata, zdata = dyn_syst.get_positions()
+        xdata, ydata, zdata = dyn_syst.get_positionsCOM()
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))/au
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
         self.set_lims()
@@ -134,30 +134,40 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename=""):
 
     fig3 = plt.figure(figsize=(15,7))
     ax3 = fig3.add_subplot(111)
-    ax3.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[-1]/au, label="a (step of {0:.2e}s)".format(step[-1]))
-    ax3.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[-1], label="e (step of {0:.2e}s)".format(step[-1]))
-    ax3.set(xlabel=r"$t \, [yr]$", ylabel=r"$a \, [au] \, or \, e$")
+    for i in range(len(E)):
+        ax3.plot(np.arange(E[i].shape[0])*step[-1]/yr, E[i], label="step of {0:.2e}s".format(step[i]))
+    ax3.set(xlabel=r"$t \, [yr]$", ylabel=r"$E \, [J]$")
     ax3.legend()
-    fig3.suptitle("Semi major axis and eccentricity "+title2)
-    fig3.savefig("plots/{0:s}a_e.png".format(savename),bbox_inches="tight")
-
+    fig3.suptitle("Mechanical energy of the whole system "+title2)
+    fig3.savefig("plots/{0:s}E.png".format(savename),bbox_inches="tight")
+    
     fig4 = plt.figure(figsize=(15,7))
     ax4 = fig4.add_subplot(111)
-    for i in range(len(E)):
-        ax4.plot(np.arange(E[i].shape[0])*step[-1]/yr, E[i], label="step of {0:.2e}s".format(step[i]))
-    ax4.set(xlabel=r"$t \, [yr]$", ylabel=r"$E \, [J]$")
+    for i in range(len(L)):
+        L2 = np.array([np.linalg.norm(Li)**2 for Li in L[i]])
+        ax4.plot(np.arange(L[i].shape[0])*step[i]/yr, L2, label=r"$L^2$ for step of {0:.2e}s".format(step[i]))
+    ax4.set(xlabel=r"$t \, [yr]$", ylabel=r"$\left|\vec{L}\right|^2 \, [kg^2 \cdot m^4 \cdot s^{-2}]$",yscale='log')
     ax4.legend()
-    fig4.suptitle("Mechanical energy of the whole system "+title2)
-    fig4.savefig("plots/{0:s}E.png".format(savename),bbox_inches="tight")
-    
+    fig4.suptitle("Squared norm of the kinetic moment of the whole system "+title2)
+    fig4.savefig("plots/{0:s}L.png".format(savename),bbox_inches="tight")
+
     fig5 = plt.figure(figsize=(15,7))
     ax5 = fig5.add_subplot(111)
-    for i in range(len(phi)):
-        ax5.plot(np.arange(phi[i].shape[0])*step[-1]/yr, phi[i], label="step of {0:.2e}s".format(step[i]))
-    ax5.set(xlabel=r"$t \, [yr]$", ylabel=r"$\phi \, [^{\circ}]$")
+    ax5.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[-1]/au, label="a (step of {0:.2e}s)".format(step[-1]))
+    ax5.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[-1], label="e (step of {0:.2e}s)".format(step[-1]))
+    ax5.set(xlabel=r"$t \, [yr]$", ylabel=r"$a \, [au] \, or \, e$")
     ax5.legend()
-    fig5.suptitle("Inclination angle of the perturbator's orbital plane "+title2)
-    fig5.savefig("plots/{0:s}phi.png".format(savename),bbox_inches="tight")
+    fig5.suptitle("Semi major axis and eccentricity "+title2)
+    fig5.savefig("plots/{0:s}a_e.png".format(savename),bbox_inches="tight")
+
+    fig6 = plt.figure(figsize=(15,7))
+    ax6 = fig6.add_subplot(111)
+    for i in range(len(phi)):
+        ax6.plot(np.arange(phi[i].shape[0])*step[-1]/yr, phi[i], label="step of {0:.2e}s".format(step[i]))
+    ax6.set(xlabel=r"$t \, [yr]$", ylabel=r"$\phi \, [^{\circ}]$")
+    ax6.legend()
+    fig6.suptitle("Inclination angle of the perturbator's orbital plane "+title2)
+    fig6.savefig("plots/{0:s}phi.png".format(savename),bbox_inches="tight")
     
     plt.show(block=True)
   

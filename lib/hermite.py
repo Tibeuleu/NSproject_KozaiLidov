@@ -69,7 +69,6 @@ def Correct(dyn_syst, dt):  # correct position and velocities of bodies in syste
 
 
 def HPC(dyn_syst, dt):  # update position and velocities of bodies in system with hermite predictor corrector
-    dyn_syst.COMShift()
     Update_a(dyn_syst)
     Update_j(dyn_syst)
     Predict(dyn_syst, dt)
@@ -89,17 +88,23 @@ def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False
         d.launch(dyn_syst.blackstyle)
 
     N = np.ceil(duration / dt).astype(int)
-    E = np.zeros(N,dtype=np.longdouble)
-    L = np.zeros((N, 3),dtype=np.longdouble)
-    sma = np.zeros(N,dtype=np.longdouble)
-    ecc = np.zeros(N,dtype=np.longdouble)
-    phi = np.zeros(N,dtype=np.longdouble)
+    E = np.zeros(N+1,dtype=np.longdouble)
+    L = np.zeros((N+1, 3),dtype=np.longdouble)
+    sma = np.zeros(N+1,dtype=np.longdouble)
+    ecc = np.zeros(N+1,dtype=np.longdouble)
+    phi = np.zeros(N+1,dtype=np.longdouble)
 
-    for j in range(N):
+    E[0] = dyn_syst.ECOM
+    L[0] = dyn_syst.LCOM
+    sma[0] = bin_syst.smaCOM
+    ecc[0] = bin_syst.eccCOM
+    phi[0] = dyn_syst.phi
+
+    for j in range(1,N+1):
         HPC(dyn_syst, dt)
 
-        E[j] = dyn_syst.E
-        L[j] = dyn_syst.L
+        E[j] = dyn_syst.ECOM
+        L[j] = dyn_syst.LCOM
         sma[j] = bin_syst.smaCOM
         ecc[j] = bin_syst.eccCOM
         phi[j] = dyn_syst.phi

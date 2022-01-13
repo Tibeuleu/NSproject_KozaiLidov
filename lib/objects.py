@@ -24,10 +24,10 @@ class Body:
         self.vp = np.zeros(3,dtype=np.longdouble)
 
     def __repr__(self): # Called upon "print(body)"
-        return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m/Ms, self.q, self.v)
+        return r"Body of mass: {0:.1e} $M_\odot$, position: {1}, velocity: {2}".format(self.m, self.q, self.v)
 
     def __str__(self): # Called upon "str(body)"
-        return r"Body of mass: {0:.1e} $M_\odot$".format(self.m/Ms)
+        return r"Body of mass: {0:.1e} $M_\odot$".format(self.m)
 
     @property
     def p(self):
@@ -67,19 +67,12 @@ class System(Body):
         zdata = np.array([body.q[2] for body in self.bodylist],dtype=np.longdouble)
         return xdata, ydata, zdata
 
-
-    def get_velocities(self): #return the positions of the bodies
-        vxdata = np.array([body.v[0] for body in self.bodylist],dtype=np.longdouble)
-        vydata = np.array([body.v[1] for body in self.bodylist],dtype=np.longdouble)
-        vzdata = np.array([body.v[2] for body in self.bodylist],dtype=np.longdouble)
-        return vxdata, vydata, vzdata
-
-
-    def get_momenta(self): #return the momenta of the bodies
-        pxdata = np.array([body.p[0] for body in self.bodylist],dtype=np.longdouble)
-        pydata = np.array([body.p[1] for body in self.bodylist],dtype=np.longdouble)
-        pzdata = np.array([body.p[2] for body in self.bodylist],dtype=np.longdouble)
-        return pxdata, pydata, pzdata
+    def get_positionsCOM(self): #return the positions of the bodies in the center of mass frame
+        COM = self.COM
+        xdata = np.array([body.q[0]-COM[0] for body in self.bodylist],dtype=np.longdouble)
+        ydata = np.array([body.q[1]-COM[1] for body in self.bodylist],dtype=np.longdouble)
+        zdata = np.array([body.q[2]-COM[2] for body in self.bodylist],dtype=np.longdouble)
+        return xdata, ydata, zdata
 
     @property
     def M(self): #return total system mass
@@ -149,29 +142,24 @@ class System(Body):
         return E
 
     @property
-    def LCOM(self): #return angular momentum in the center of mass of a binary system
-        #self.COMShiftBin()
-        LCOM = np.zeros(3,dtype=np.longdouble)
-        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q#b
-        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v#b
-        LCOM = self.mu*np.cross(dr,dv)
-
-        return LCOM
-
-    @property
-    def ECOM(self): #return mechanical energy in the center of mass of a binary system
-        #self.COMShiftBin()
-        dr = self.bodylist[0].m/self.mu*self.bodylist[0].q#b
-        dv = self.bodylist[0].m/self.mu*self.bodylist[0].v#b
-        ECOM = self.mu/2.*np.linalg.norm(dv)**2 - Ga*self.M*self.mu/np.linalg.norm(dr)
-
-        return ECOM
-
-    @property
-    def L(self): #return angular momentum of bodies in system
-        L = np.zeros(3,dtype=np.longdouble)
+    def ECOM(self): #return total energy of bodies in system in the center of mass frame
+        T, W = 0, 0
+        COM, COMV = self.COM, self.COMV
         for body in self.bodylist:
-            L = L + np.cross(body.q,body.p)
+            T = T + 1./2.*body.m*np.linalg.norm(body.v-COMV)**2
+            for otherbody in self.bodylist:
+                if body != otherbody:
+                    rij = np.linalg.norm(body.q-otherbody.q)
+                    W = W - Ga*body.m*otherbody.m/rij
+        E = T + W
+        return E
+
+    @property
+    def LCOM(self): #return angular momentum of bodies in system
+        L = np.zeros(3,dtype=np.longdouble)
+        COM, COMV = self.COM, self.COMV
+        for body in self.bodylist:
+            L = L + np.cross(body.q-COM,body.p-body.m*COMV)
         return L
 
     @property
@@ -186,6 +174,13 @@ class System(Body):
                     W = W - Ga*body.m*otherbody.m/rij
         E = T + W
         return E
+
+    @property
+    def L(self): #return angular momentum of bodies in system in the center of mass frame
+        L = np.zeros(3,dtype=np.longdouble)
+        for body in self.bodylist:
+            L = L + np.cross(body.q,body.p)
+        return L
 
     @property
     def eccCOM(self): #exentricity of two body sub system
