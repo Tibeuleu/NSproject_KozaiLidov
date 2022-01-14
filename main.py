@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 from sys import exit as sysexit
+from time import time
 import numpy as np
 import matplotlib.pyplot as plt
 from lib.objects import Body, System
@@ -41,11 +42,16 @@ def main():
         bodylist.append(Body(m[j], q[j], v[j]))
     bin_syst = System(bodylist[0:2])
     dyn_syst = System(bodylist, main=True)
+    print("Integration start...")
+    t1 = time()
 
     if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
         E, L, sma, ecc, phi = leapfrog(dyn_syst, bin_syst, duration, step, recover_param=True, display=display, savename=savename, gif=gif)
     elif integrator.lower() in ['hermite','herm']:
         E, L, sma, ecc, phi = hermite(dyn_syst, bin_syst, duration, step, recover_param=True, display=display, savename=savename, gif=gif)
+    
+    t2=time()
+    print("...Integration end.\n Elapsed time {0:.3f} sec".format(t2-t1))
 
     parameters = [duration, [step], dyn_syst, integrator, [a, e, psi]]
     display_parameters([E], [L], [sma], [ecc], [phi], parameters=parameters, savename=savename, display_param=display_param)
