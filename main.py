@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 5000*yr, np.longdouble(5./1.*86400.) #integration time and step in seconds
+    duration, step = 5000*yr, np.longdouble(1./1.*86400.) #integration time and step in seconds
     integrator = "leapfrog"
     n_bodies = 3
     display = False
