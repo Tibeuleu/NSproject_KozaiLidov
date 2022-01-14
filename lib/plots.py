@@ -134,11 +134,12 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     Save integrated parameters plots to multiple png files.
     -----
     Inputs:
-    E, L, sma, ecc, phi : list of np.ndarray
+    E, L, sma, ecc, phi: list of np.ndarray
         list of integrated parameters value computed for each step length in
         parameters[step] list.
     parameters : list
-        list of simulation parameters : duration, steps, system, integrator.
+        list of simulation parameters : duration, steps, system, integrator,
+        and initialisation parameters.        
     savename : str
         default savename that will be prepend to each saved file path.
         Default to empty string.
@@ -148,11 +149,14 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     """
     if savename != "":
         savename += "_"
-    duration, step, dyn_syst, integrator = parameters
+    duration, step, dyn_syst, integrator, init = parameters
+    a, e, psi = init
     bodies = ""
-    for body in dyn_syst.bodylist:
+    init_str = ""
+    for i, body in enumerate(dyn_syst.bodylist):
         bodies += str(body)+" ; "
-    title1, title2 = "Relative difference of the {0:s} ","for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years ".format(bodies, integrator, duration/yr)
+        init_str += r"a{0:d} = {1:.2f} au, e{0:d} = {2:.2f}, $\psi${0:d} = {3:.2f}° ; ".format(i+1,a[i]/au,e[i],psi[i]*180./np.pi)
+    title1, title2 = "Relative difference of the {0:s} ","for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years with initial parameters\n {3:s}".format(bodies, integrator, duration/yr, init_str)
 
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)

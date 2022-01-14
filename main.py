@@ -12,8 +12,8 @@ from lib.units import *
 def main():
     #initialisation
     m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms#/Ms  # Masses in Solar mass
-    a = np.array([.75, .75, 5.],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
-    e = np.array([0., 0., 0.25],dtype=np.longdouble)   # Eccentricity
+    a = np.array([1.0, 1.0, 7.0],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
+    e = np.array([0., 0., 0.10],dtype=np.longdouble)   # Eccentricity
     psi = np.array([0., 0., 80.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
     x1 = np.array([0., -1., 0.],dtype=np.longdouble)*a[0]*(1.+e[0])
@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 1000*yr, np.longdouble(1./2.*86400.) #integration time and step in seconds
+    duration, step = 5000*yr, np.longdouble(5./1.*86400.) #integration time and step in seconds
     integrator = "leapfrog"
     n_bodies = 3
     display = False
@@ -47,7 +47,7 @@ def main():
     elif integrator.lower() in ['hermite','herm']:
         E, L, sma, ecc, phi = hermite(dyn_syst, bin_syst, duration, step, recover_param=True, display=display, savename=savename, gif=gif)
 
-    parameters = [duration, [step], dyn_syst, integrator]
+    parameters = [duration, [step], dyn_syst, integrator, [a, e, psi]]
     display_parameters([E], [L], [sma], [ecc], [phi], parameters=parameters, savename=savename, display_param=display_param)
     return 0
 
