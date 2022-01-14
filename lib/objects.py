@@ -11,11 +11,11 @@ from lib.units import *
 class Body:
 
     def __init__(self, mass, position, velocity):
-        self.m = mass
-        self.q = position
-        self.v = velocity
-        self.qb = position
-        self.vb = velocity
+        self.m = np.longdouble(mass)
+        self.q = np.longdouble(position)
+        self.v = np.longdouble(velocity)
+        self.qb = np.longdouble(position)
+        self.vb = np.longdouble(velocity)
         self.a = np.zeros(3,dtype=np.longdouble)
         self.ap = np.zeros(3,dtype=np.longdouble)
         self.j = np.zeros(3,dtype=np.longdouble)
@@ -76,14 +76,14 @@ class System(Body):
 
     @property
     def M(self): #return total system mass
-        mass = 0
+        mass = np.longdouble(0.)
         for body in self.bodylist:
             mass = mass + body.m
         return mass
 
     @property
     def mu(self):
-        prod = 1
+        prod = np.longdouble(1.)
         for body in self.bodylist:
             prod = prod * body.m
         mu = prod/self.M
@@ -130,8 +130,8 @@ class System(Body):
     @property
     def EBIN(self): #return total energy of inner binary
         self.COMShiftBin()
-        T = 0
-        W = 0
+        T = np.longdouble(0.)
+        W = np.longdouble(0.)
         for body in self.bodylist:
             T = T + 1./2.*body.m*np.linalg.norm(body.vb)**2
             for otherbody in self.bodylist:
@@ -143,7 +143,7 @@ class System(Body):
 
     @property
     def ECOM(self): #return total energy of bodies in system in the center of mass frame
-        T, W = 0, 0
+        T, W = np.longdouble(0.), np.longdouble(0.)
         COM, COMV = self.COM, self.COMV
         for body in self.bodylist:
             T = T + 1./2.*body.m*np.linalg.norm(body.v-COMV)**2
@@ -164,8 +164,8 @@ class System(Body):
 
     @property
     def E(self): #return total energy of bodies in system
-        T = 0
-        W = 0
+        T = np.longdouble(0.)
+        W = np.longdouble(0.)
         for body in self.bodylist:
             T = T + 1./2.*body.m*np.linalg.norm(body.v)**2
             for otherbody in self.bodylist:
@@ -225,12 +225,3 @@ class System(Body):
         else :
             phi = np.nan
         return phi
-"""""
-    def update_coordarray(self): #add current positions of bodies in system in coordarray array.
-        sub_array = []
-        for body in self.bodylist:
-            sub_array.append(body.q)
-        self.coordarray.append(sub_array)
-
-    def orbital_analysis(self): #derive semi major axis and eccentricity evolution.
-"""""
