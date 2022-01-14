@@ -55,15 +55,16 @@ def main():
         elif integrator.lower() in ['hermite','herm']:
             future_ELae.append(exe.submit(hermite, bodysyst[i][1], bodysyst[i][0], duration, step0, recover_param=True, display=display, savename=savename, gif=gif))
     
-    E, L, sma, ecc = [], [], [], []
+    E, L, sma, ecc, phi = [], [], [], [], []
     for future in future_ELae:
-        E0, L0, sma0, ecc0 = future.result()
+        E0, L0, sma0, ecc0, phi0 = future.result()
         E.append(E0)
         L.append(L0)
         sma.append(sma0)
         ecc.append(ecc0)
+        phi.append(phi0)
     parameters = [duration, step, dyn_syst, integrator]
-    display_parameters(E, L, sma, ecc, parameters=parameters, savename=savename)
+    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename)
     return 0
 
 if __name__ == '__main__':
