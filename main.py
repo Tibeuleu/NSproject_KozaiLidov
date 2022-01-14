@@ -12,7 +12,7 @@ from lib.units import *
 def main():
     #initialisation
     m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms#/Ms  # Masses in Solar mass
-    a = np.array([1., 1., 5.5],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
+    a = np.array([.75, .75, 5.],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 0.25],dtype=np.longdouble)   # Eccentricity
     psi = np.array([0., 0., 80.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
@@ -27,7 +27,7 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 5000*yr, np.longdouble(1./2.*86400.) #integration time and step in seconds
+    duration, step = 1000*yr, np.longdouble(1./2.*86400.) #integration time and step in seconds
     integrator = "leapfrog"
     n_bodies = 3
     display = False

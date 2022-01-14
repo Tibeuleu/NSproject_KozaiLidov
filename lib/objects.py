@@ -186,6 +186,7 @@ class System(Body):
     def eccCOM(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
             ecc = (2.*self.ECOM*(np.linalg.norm(self.LCOM)**2))/(Ga**2*self.M**2*self.mu**3) + 1.
+
         else :
             ecc = np.nan
         return ecc
@@ -215,13 +216,15 @@ class System(Body):
         return sma
 
     @property
-    def phi(self): #return angle in degree between plans formed by body1 and body2 (perurbator) trajectories
+    def phi(self): #return angle in degree between plans formed by perturbator plan and reference plan
         if len(self.bodylist) == 3 :
             body1 = self.bodylist[0]
             body2 = self.bodylist[2]
-            n1 = np.cross(body1.q, body1.v)
-            n2 = np.cross(body2.q, body2.v)
+            n1 = np.cross(body1.q-self.COM, body1.v-self.COMV)
+            n2 = np.cross(body2.q-self.COM, body2.v-self.COMV)
+            n1 = np.array([0., 0., 1.], dtype=np.longdouble)
             phi = np.arccos(np.dot(n1, n2) / (np.linalg.norm(n1) * np.linalg.norm(n2)))*180./np.pi
         else :
             phi = np.nan
         return phi
+
