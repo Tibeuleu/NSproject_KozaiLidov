@@ -116,9 +116,9 @@ def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False
                 step = None
             # display progression
             if len(dyn_syst.bodylist) == 1:
-                d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
+                d.on_running(step=step, label="{0:.2f} years".format(j*dt/yr))
             else:
-                d.on_running(dyn_syst, step=step, label="{0:.2f} years".format(j*dt/yr))
+                d.on_running(step=step, label="{0:.2f} years".format(j*dt/yr))
     if display:
         d.close()
         if gif:

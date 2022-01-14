@@ -36,6 +36,7 @@ def main():
     display = True
     gif = False
     savename = "{0:d}bodies_psi45_{1:s}".format(n_bodies, integrator)
+    display_param = True
 
     bodies, bodysyst = [],[]
     for j in range(n_bodies):
@@ -64,7 +65,7 @@ def main():
         ecc.append(ecc0)
         phi.append(phi0)
     parameters = [duration, step, dyn_syst, integrator]
-    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename)
+    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename, display_param=display_param)
     return 0
 
 if __name__ == '__main__':

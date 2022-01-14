@@ -33,6 +33,7 @@ def main():
     display = False
     gif = False
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
+    display_param = True
 
     #simulation start
     bodylist = []
@@ -47,8 +48,7 @@ def main():
         E, L, sma, ecc, phi = hermite(dyn_syst, bin_syst, duration, step, recover_param=True, display=display, savename=savename, gif=gif)
 
     parameters = [duration, [step], dyn_syst, integrator]
-    display_parameters([E], [L], [sma], [ecc], [phi], parameters=parameters, savename=savename) #take the mean value of sma/ecc on given time interval (up to one period)
-    # np.convolve(sma, np.ones(int(period/step)))/int(period/step) -> moving average on the period duration
+    display_parameters([E], [L], [sma], [ecc], [phi], parameters=parameters, savename=savename, display_param=display_param)
     return 0
 
 if __name__ == '__main__':
