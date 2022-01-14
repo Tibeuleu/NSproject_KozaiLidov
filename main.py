@@ -12,7 +12,7 @@ from lib.units import *
 def main():
     #initialisation
     m = np.array([1., 1., 1e-1],dtype=np.longdouble)*Ms#/Ms  # Masses in Solar mass
-    a = np.array([0.75, 0.75, 5.],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
+    a = np.array([1., 1., 5.5],dtype=np.longdouble)*au#/au   # Semi-major axis in astronomical units
     e = np.array([0., 0., 0.25],dtype=np.longdouble)   # Eccentricity
     psi = np.array([0., 0., 80.],dtype=np.longdouble)*np.pi/180.    # Inclination of the orbital plane in degrees
 
@@ -27,38 +27,28 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 5000*yr, np.array([30./1.*86400.],dtype=np.longdouble) #integration time and step in seconds
-    step = np.sort(step)[::-1]
+    duration, step = 5000*yr, np.longdouble(1./2.*86400.) #integration time and step in seconds
     integrator = "leapfrog"
     n_bodies = 3
     display = False
     gif = False
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
+    display_param = True
 
     #simulation start
-    E, L, ecc, sma, phi = [], [], [], [], []
-    for i,step0 in enumerate(step):
-        bodylist = []
-        for j in range(n_bodies):
-            bodylist.append(Body(m[j], q[j], v[j]))
-        bin_syst = System(bodylist[0:2])
-        dyn_syst = System(bodylist, main=True)
+    bodylist = []
+    for j in range(n_bodies):
+        bodylist.append(Body(m[j], q[j], v[j]))
+    bin_syst = System(bodylist[0:2])
+    dyn_syst = System(bodylist, main=True)
 
-        if i != 0:
-            display = False
-        if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
-            E0, L0, sma0, ecc0, phi0 = leapfrog(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
-        elif integrator.lower() in ['hermite','herm']:
-            E0, L0, sma0, ecc0, phi0 = hermite(dyn_syst, bin_syst, duration, step0, recover_param=True, display=display, savename=savename, gif=gif)
-        E.append(E0)
-        L.append(L0)
-        ecc.append(ecc0)
-        sma.append(sma0)
-        phi.append(phi0)
+    if integrator.lower() in ['leapfrog', 'frogleap', 'frog']:
+        E, L, sma, ecc, phi = leapfrog(dyn_syst, bin_syst, duration, step, recover_param=True, display=display, savename=savename, gif=gif)
+    elif integrator.lower() in ['hermite','herm']:
+        E, L, sma, ecc, phi = hermite(dyn_syst, bin_syst, duration, step, recover_param=True, display=display, savename=savename, gif=gif)
 
-    parameters = [duration, step, dyn_syst, integrator]
-    display_parameters(E, L, sma, ecc, phi, parameters=parameters, savename=savename) #take the mean value of sma/ecc on given time interval (up to one period)
-    # np.convolve(sma, np.ones(int(period/step)))/int(period/step) -> moving average on the period duration
+    parameters = [duration, [step], dyn_syst, integrator]
+    display_parameters([E], [L], [sma], [ecc], [phi], parameters=parameters, savename=savename, display_param=display_param)
     return 0
 
 if __name__ == '__main__':

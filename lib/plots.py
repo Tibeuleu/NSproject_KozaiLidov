@@ -10,6 +10,33 @@ from lib.units import *
 
 
 class DynamicUpdate():
+    """
+    Class for dynamic display of the integrated system.
+    Initialise with the System of Bodies that will be integrated.
+    Launch the display, then call on_running method the update it.
+    -----
+    dyn_syst = System(bodylist)
+    d = DynamicUpdate(dyn_syst)
+    [Start integration procedure]
+    #Init
+    d.launch()
+    [in intgration loop]
+    #integration
+    for step in range(duration):
+        #update attributes of dyn_syst
+        d.on_running(step=step, label="will be displayed on current update")
+    [when integration reach end]
+    d.close()
+    -----
+    Additionnal parameters:
+    launch(blackstyle): boolean
+        If the display should have black background.
+        Default to True.
+    launch(lim_factor): float
+        Limits of the 3D display are dynamically updated to max_value*lim_factor.
+        Should always be >1. to have all bodies in the display.
+        Default to 1.5
+    """
     #Suppose we know the x range
     min_x = -1
     max_x = 1
@@ -41,7 +68,7 @@ class DynamicUpdate():
         self.ax.w_yaxis.set_pane_color((0,0,0,0))
         self.ax.w_zaxis.set_pane_color((0,0,0,0))
 
-    def launch(self, blackstyle=True):
+    def launch(self, blackstyle=True, lim_factor=1.5):
         #Set up plot
         if blackstyle:
             self.blackstyle = True
@@ -50,6 +77,7 @@ class DynamicUpdate():
             self.blackstyle = False
             self.fig = plt.figure(figsize=(10,10))
             self.ax = self.fig.add_subplot(projection='3d')
+        self.lim_factor = 1.5
 
         self.lines = []
         for i,body in enumerate(self.dyn_syst.bodylist):
@@ -59,7 +87,7 @@ class DynamicUpdate():
         self.lines = np.array(self.lines)
         #Autoscale on unknown axis and known lims on the other
         self.ax.set_autoscaley_on(True)
-        self.set_lims()
+        self.set_lims(factor=self.lim_factor)
         #Other stuff
         self.ax.grid()
         if self.blackstyle:
@@ -73,13 +101,13 @@ class DynamicUpdate():
             self.ax.set_ylabel('AU')
             self.ax.set_zlabel('AU')
 
-    def on_running(self, dyn_syst, step=None, label=None):
-        xdata, ydata, zdata = dyn_syst.get_positionsCOM()
+    def on_running(self, step=None, label=None):
+        xdata, ydata, zdata = self.dyn_syst.get_positionsCOM()
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))/au
         self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
-        self.set_lims()
+        self.set_lims(factor=self.lim_factor)
         #Update data (with the new _and_ the old points)
-        for i,body in enumerate(dyn_syst.bodylist):
+        for i,body in enumerate(self.dyn_syst.bodylist):
             x, y, z = body.q/au
             self.lines[i].set_data_3d([x], [y], [z])
         if not label is None:
@@ -101,8 +129,22 @@ class DynamicUpdate():
         plt.close()
 
 
-def display_parameters(E,L,sma,ecc,phi,parameters,savename=""):
+def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True):
     """
+    Save integrated parameters plots to multiple png files.
+    -----
+    Inputs:
+    E, L, sma, ecc, phi : list of np.ndarray
+        list of integrated parameters value computed for each step length in
+        parameters[step] list.
+    parameters : list
+        list of simulation parameters : duration, steps, system, integrator.
+    savename : str
+        default savename that will be prepend to each saved file path.
+        Default to empty string.
+    display_param : boolean
+        Set to True if the user wants to display the plots before saving,
+        False otherwise. Default to True.
     """
     if savename != "":
         savename += "_"
@@ -169,5 +211,6 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename=""):
     fig6.suptitle("Inclination angle of the perturbator's orbital plane "+title2)
     fig6.savefig("plots/{0:s}phi.png".format(savename),bbox_inches="tight")
     
-    plt.show(block=True)
+    if display_param:
+        plt.show(block=True)
   
