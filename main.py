@@ -28,13 +28,13 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration, step = 10000*yr, np.longdouble(1.0/2.*86400.) #integration time and step in seconds
+    duration, step = 5000*yr, np.longdouble(1.0/1.*86400.) #integration time and step in seconds
     integrator = "leapfrog"
     n_bodies = 3
     display = False
     gif = False
-    savename = "{0:d}bodies_1_{1:s}".format(n_bodies, integrator)
-    display_param = True
+    savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
+    display_param = False
 
     #simulation start
     bodylist = []
