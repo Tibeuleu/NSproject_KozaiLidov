@@ -150,7 +150,7 @@ class System(Body):
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
-                    W = W - Ga*otherbody.m/(body.m+otherbody.m)*body.m**2/rij
+                    W = W - Ga*otherbody.m*body.m/(2.*rij)
         E = T + W
         return E
 
@@ -171,7 +171,7 @@ class System(Body):
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
-                    W = W - Ga*otherbody.m/(body.m+otherbody.m)*body.m**2/rij
+                    W = W - Ga*otherbody.m*body.m/(2.*rij)
         E = T + W
         return E
 
