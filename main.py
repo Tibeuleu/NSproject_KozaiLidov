@@ -33,15 +33,16 @@ def main():
     n_bodies = 3
     display = False
     gif = False
+    blackstyle = True
     savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
-    display_param = False
+    display_param = True
 
     #simulation start
     bodylist = []
     for j in range(n_bodies):
         bodylist.append(Body(m[j], q[j], v[j]))
     bin_syst = System(bodylist[0:2])
-    dyn_syst = System(bodylist, main=True)
+    dyn_syst = System(bodylist, main=True, blackstyle=blackstyle)
     print("Integration start...")
     t1 = time()
 
