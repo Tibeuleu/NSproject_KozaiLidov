@@ -18,7 +18,7 @@ def main():
             dtype=np.longdouble)*au # Semi-major axis in astronomical units
     e = np.array([0., 0., 0.10],
             dtype=np.longdouble)    # Eccentricity
-    psi = np.array([0., 0., 35.],
+    psi = np.array([0., 0., 80.],
             dtype=np.longdouble)*np.pi/180. # Inclination of the orbital plane in degrees
 
     x1 = a[0]*(1.+e[0])*np.array([0., -1., 0.],
@@ -38,14 +38,14 @@ def main():
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters
-    duration = 2000*yr    #integration time in seconds
+    duration = 5000*yr    #integration time in seconds
     step = np.longdouble(1.0/1.*86400.) #integration step in seconds
     integrator = "leapfrog"
     n_bodies = 3
     display = False
     gif = False
     blackstyle = True
-    savename = "{0:d}bodies_test_{1:s}".format(n_bodies, integrator)
+    savename = "{0:d}bodies_{1:s}".format(n_bodies, integrator)
     display_param = True
 
     #simulation start
