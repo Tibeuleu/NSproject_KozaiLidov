@@ -82,7 +82,8 @@ class DynamicUpdate():
         self.lines = []
         for i,body in enumerate(self.dyn_syst.bodylist):
             x, y, z = body.q/au-self.dyn_syst.COM/au
-            lines, = self.ax.plot([x],[y],[z],'o',color="C{0:d}".format(i),label="{0:s}".format(str(body)))
+            lines, = self.ax.plot([x],[y],[z],'o',color="C{0:d}".format(i),
+                                    label="{0:s}".format(str(body)))
             self.lines.append(lines)
         self.lines = np.array(self.lines)
         #Autoscale on unknown axis and known lims on the other
@@ -104,7 +105,8 @@ class DynamicUpdate():
     def on_running(self, step=None, label=None):
         xdata, ydata, zdata = self.dyn_syst.get_positionsCOM()
         values = np.sqrt(np.sum((np.array((xdata,ydata,zdata))**2).T,axis=1))/au
-        self.min_x, self.max_x = -np.max([np.abs(values).max(),self.max_x]), np.max([np.abs(values).max(),self.max_x])
+        self.min_x = -np.max([np.abs(values).max(),self.max_x])
+        self.max_x = np.max([np.abs(values).max(),self.max_x])
         self.set_lims(factor=self.lim_factor)
         #Update data (with the new _and_ the old points)
         for i,body in enumerate(self.dyn_syst.bodylist):
@@ -156,12 +158,15 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     for i, body in enumerate(dyn_syst.bodylist):
         bodies += str(body)+" ; "
         init_str += r"a{0:d} = {1:.2f} au, e{0:d} = {2:.2f}, $\psi${0:d} = {3:.2f}° ; ".format(i+1,a[i]/au,e[i],psi[i]*180./np.pi)
-    title1, title2 = "Relative difference of the {0:s} ","for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years with initial parameters\n {3:s}".format(bodies, integrator, duration/yr, init_str)
+    title1 = "Relative difference of the {0:s} "
+    title2 = "for a system composed of {0:s}\n integrated with {1:s} for a duration of {2:.2f} years with initial parameters\n {3:s}".format(bodies, integrator, duration/yr, init_str)
 
     fig1 = plt.figure(figsize=(15,7))
     ax1 = fig1.add_subplot(111)
     for i in range(len(E)):
-        ax1.plot(np.arange(E[i].shape[0]-1)*step[i]/yr, np.abs((E[i][1:]-E[i][0])/E[i][0]), label="step of {0:.2e}s".format(step[i]))
+        ax1.plot(np.arange(E[i].shape[0]-1)*step[i]/yr,
+                np.abs((E[i][1:]-E[i][0])/E[i][0]),
+                label="step of {0:.2e}s".format(step[i]))
     ax1.set(xlabel=r"$t \, [yr]$", ylabel=r"$\left|\frac{\delta E_m}{E_m(t=0)}\right|$", yscale='log')
     ax1.legend()
     fig1.suptitle(title1.format("mechanical energy")+title2)
@@ -172,8 +177,10 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     for i in range(len(L)):
         dL = ((L[i]-L[i][0])/L[i][0])
         dL[np.isnan(dL)] = 0.
-        ax2.plot(np.arange(L[i].shape[0]-1)*step[i]/yr, np.abs(np.sum(dL[1:],axis=1)), label="step of {0:.2e}s".format(step[i]))
-    ax2.set(xlabel=r"$t \, [yr]$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$",yscale='log')
+        ax2.plot(np.arange(L[i].shape[0]-1)*step[i]/yr,
+                np.abs(np.sum(dL[1:],axis=1)),
+                label="step of {0:.2e}s".format(step[i]))
+    ax2.set(xlabel=r"$t \, [yr]$", ylabel=r"$\left|\frac{\delta \vec{L}}{\vec{L}(t=0)}\right|$")
     ax2.legend()
     fig2.suptitle(title1.format("kinetic moment")+title2)
     fig2.savefig("plots/{0:s}dL2.png".format(savename),bbox_inches="tight")
@@ -181,7 +188,8 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     fig3 = plt.figure(figsize=(15,7))
     ax3 = fig3.add_subplot(111)
     for i in range(len(E)):
-        ax3.plot(np.arange(E[i].shape[0])*step[-1]/yr, E[i], label="step of {0:.2e}s".format(step[i]))
+        ax3.plot(np.arange(E[i].shape[0])*step[-1]/yr, E[i],
+                    label="step of {0:.2e}s".format(step[i]))
     ax3.set(xlabel=r"$t \, [yr]$", ylabel=r"$E \, [J]$")
     ax3.legend()
     fig3.suptitle("Mechanical energy of the whole system "+title2)
@@ -191,16 +199,19 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     ax4 = fig4.add_subplot(111)
     for i in range(len(L)):
         L2 = np.array([np.linalg.norm(Li)**2 for Li in L[i]])
-        ax4.plot(np.arange(L[i].shape[0])*step[i]/yr, L2, label=r"$L^2$ for step of {0:.2e}s".format(step[i]))
-    ax4.set(xlabel=r"$t \, [yr]$", ylabel=r"$\left|\vec{L}\right|^2 \, [kg^2 \cdot m^4 \cdot s^{-2}]$",yscale='log')
+        ax4.plot(np.arange(L[i].shape[0])*step[i]/yr, L2,
+                    label=r"$L^2$ for step of {0:.2e}s".format(step[i]))
+    ax4.set(xlabel=r"$t \, [yr]$", ylabel=r"$\left|\vec{L}\right|^2 \, [kg^2 \cdot m^4 \cdot s^{-2}]$")
     ax4.legend()
     fig4.suptitle("Squared norm of the kinetic moment of the whole system "+title2)
     fig4.savefig("plots/{0:s}L.png".format(savename),bbox_inches="tight")
 
     fig5 = plt.figure(figsize=(15,7))
     ax5 = fig5.add_subplot(111)
-    ax5.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[-1]/au, label="a (step of {0:.2e}s)".format(step[-1]))
-    ax5.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[-1], label="e (step of {0:.2e}s)".format(step[-1]))
+    ax5.plot(np.arange(sma[-1].shape[0])*step[-1]/yr, sma[-1]/au,
+                label="a (step of {0:.2e}s)".format(step[-1]))
+    ax5.plot(np.arange(ecc[-1].shape[0])*step[-1]/yr, ecc[-1],
+                label="e (step of {0:.2e}s)".format(step[-1]))
     ax5.set(xlabel=r"$t \, [yr]$", ylabel=r"$a \, [au] \, or \, e$")
     ax5.legend()
     fig5.suptitle("Semi major axis and eccentricity "+title2)
@@ -209,7 +220,8 @@ def display_parameters(E,L,sma,ecc,phi,parameters,savename="",display_param=True
     fig6 = plt.figure(figsize=(15,7))
     ax6 = fig6.add_subplot(111)
     for i in range(len(phi)):
-        ax6.plot(np.arange(phi[i].shape[0])*step[-1]/yr, phi[i], label="step of {0:.2e}s".format(step[i]))
+        ax6.plot(np.arange(phi[i].shape[0])*step[-1]/yr, phi[i],
+                    label="step of {0:.2e}s".format(step[i]))
     ax6.set(xlabel=r"$t \, [yr]$", ylabel=r"$\phi \, [^{\circ}]$")
     ax6.legend()
     fig6.suptitle("Inclination angle of the perturbator's orbital plane "+title2)

@@ -17,7 +17,7 @@ def Update_a(dyn_syst):  # update acceleration of bodies in system
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
                 rij = np.linalg.norm(body.q - otherbody.q)
-                body.a = body.a - (body.q - otherbody.q) * G * otherbody.m / (rij ** 3)
+                body.a -= (body.q-otherbody.q)*G*otherbody.m/(rij**3)
 
 
 def Update_j(dyn_syst):  # update jerk of bodies in system
@@ -28,14 +28,14 @@ def Update_j(dyn_syst):  # update jerk of bodies in system
                 rij = np.linalg.norm(body.q - otherbody.q)
                 deltav = (body.v - otherbody.v)
                 deltar = (body.q - otherbody.q)
-                vr = deltav + 3. * deltar * np.inner(deltav, deltar) / (rij ** 2)
-                body.j = body.j - G * otherbody.m / (rij ** 3) * vr
+                vr = deltav+3.*deltar*np.inner(deltav,deltar)/(rij**2)
+                body.j -= G*otherbody.m/(rij**3)*vr
 
 
-def Predict(dyn_syst, dt):  # update predicted position and velocities of bodies in system
+def Predict(dyn_syst, dt):  # update predicted q and v of bodies in system
     for body in dyn_syst.bodylist:
-        body.qp = body.q + dt * body.v + ((dt ** 2) * body.a / 2.) + ((dt ** 3) * body.j / 6.)
-        body.vp = body.v + dt * body.a + ((dt ** 2) * body.j / 2.)
+        body.qp = body.q+dt*body.v+((dt**2)*body.a/2.)+((dt**3)*body.j/ 6.)
+        body.vp = body.v+dt*body.a+((dt**2)*body.j/2.)
 
 
 def Update_ap(dyn_syst):  # update acceleration of bodies in system
@@ -43,8 +43,8 @@ def Update_ap(dyn_syst):  # update acceleration of bodies in system
         body.ap = np.zeros(3,dtype=np.longdouble)
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
-                rij = np.linalg.norm(body.qp - otherbody.qp)
-                body.ap = body.ap - (body.qp - otherbody.qp) * G * otherbody.m / (rij ** 3)
+                rij = np.linalg.norm(body.qp-otherbody.qp)
+                body.ap -= (body.qp-otherbody.qp)*G*otherbody.m/(rij**3)
 
 
 def Update_jp(dyn_syst):  # update jerk of bodies in system
@@ -52,20 +52,20 @@ def Update_jp(dyn_syst):  # update jerk of bodies in system
         body.jp = np.zeros(3,dtype=np.longdouble)
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
-                rij = np.linalg.norm(body.qp - otherbody.qp)
-                deltav = (body.vp - otherbody.vp)
-                deltar = (body.qp - otherbody.qp)
-                vr = deltav + 3. * deltar * np.inner(deltav, deltar) / (rij ** 2)
-                body.jp = body.jp - G * otherbody.m / (rij ** 3) * vr
+                rij = np.linalg.norm(body.qp-otherbody.qp)
+                deltav = (body.vp-otherbody.vp)
+                deltar = (body.qp-otherbody.qp)
+                vr = deltav+3.*deltar*np.inner(deltav,deltar)/(rij**2)
+                body.jp -= G*otherbody.m/(rij**3)*vr
 
 
 def Correct(dyn_syst, dt):  # correct position and velocities of bodies in system
     for body in dyn_syst.bodylist:
-        a2 = (6. * (body.a - body.ap) + dt * (4 * body.j + 2 * body.jp)) / (dt ** 2)
-        a3 = (12. * (body.a - body.ap) + dt * 6. * (body.j + body.jp)) / (dt ** 3)
+        a2 = (6.*(body.a-body.ap)+dt*(4.*body.j+2.*body.jp))/(dt**2)
+        a3 = (12.*(body.a-body.ap)+dt*6.*(body.j+body.jp))/(dt**3)
 
-        body.q = body.qp + ((dt ** 4) * a2 / 24.) + ((dt ** 5) * a3 / 120.)
-        body.v = body.vp + ((dt ** 3) * a2 / 6.) + ((dt ** 4) * a3 / 24.)
+        body.q = body.qp+((dt**4)*a2/24.)+((dt**5)*a3/120.)
+        body.v = body.vp+((dt**3)*a2/6.)+((dt**4)*a3/24.)
 
 
 def HPC(dyn_syst, dt):  # update position and velocities of bodies in system with hermite predictor corrector
@@ -78,7 +78,8 @@ def HPC(dyn_syst, dt):  # update position and velocities of bodies in system wit
     dyn_syst.time = dyn_syst.time + dt
 
 
-def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None, gif=False):
+def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False,
+            display=False, savename=None, gif=False):
     if display:
         try:
             system("mkdir tmp")
@@ -87,7 +88,7 @@ def hermite(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False
         d = DynamicUpdate(dyn_syst)
         d.launch(dyn_syst.blackstyle)
 
-    N = np.ceil(duration / dt).astype(int)
+    N = np.ceil(duration/dt).astype(int)
     E = np.zeros(N+1,dtype=np.longdouble)
     L = np.zeros((N+1, 3),dtype=np.longdouble)
     sma = np.zeros(N+1,dtype=np.longdouble)

@@ -21,18 +21,19 @@ def Kick(dyn_syst, dt):
         body.a = np.zeros(3,dtype=np.longdouble)
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
-                rij = np.linalg.norm(body.q - otherbody.q)
-                body.a = body.a - (body.q - otherbody.q) * G * otherbody.m / (rij ** 3)
-        body.v = body.v + dt * body.a
+                rij = np.linalg.norm(body.q-otherbody.q)
+                body.a -= (body.q-otherbody.q)*G*otherbody.m/(rij**3)
+        body.v += dt*body.a
 
 
 def LP(dyn_syst, dt):
-    Drift(dyn_syst, dt / 2)
+    Drift(dyn_syst, dt/2)
     Kick(dyn_syst, dt)
-    Drift(dyn_syst, dt / 2)
-    dyn_syst.time = dyn_syst.time + dt
+    Drift(dyn_syst, dt/2)
+    dyn_syst.time = dyn_syst.time+dt
 
-def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False, display=False, savename=None, gif=False):
+def leapfrog(dyn_syst, bin_syst, duration, dt, recover_param=False,
+            display=False, savename=None, gif=False):
     if display:
         try:
             system("mkdir tmp")
