@@ -17,7 +17,7 @@ def Update_a(dyn_syst):  # update acceleration of bodies in system
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
                 rij = np.linalg.norm(body.q - otherbody.q)
-                body.a = body.a - (body.q - otherbody.q) * Ga * otherbody.m / (rij ** 3)
+                body.a = body.a - (body.q - otherbody.q) * G * otherbody.m / (rij ** 3)
 
 
 def Update_j(dyn_syst):  # update jerk of bodies in system
@@ -29,7 +29,7 @@ def Update_j(dyn_syst):  # update jerk of bodies in system
                 deltav = (body.v - otherbody.v)
                 deltar = (body.q - otherbody.q)
                 vr = deltav + 3. * deltar * np.inner(deltav, deltar) / (rij ** 2)
-                body.j = body.j - Ga * otherbody.m / (rij ** 3) * vr
+                body.j = body.j - G * otherbody.m / (rij ** 3) * vr
 
 
 def Predict(dyn_syst, dt):  # update predicted position and velocities of bodies in system
@@ -44,7 +44,7 @@ def Update_ap(dyn_syst):  # update acceleration of bodies in system
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
                 rij = np.linalg.norm(body.qp - otherbody.qp)
-                body.ap = body.ap - (body.qp - otherbody.qp) * Ga * otherbody.m / (rij ** 3)
+                body.ap = body.ap - (body.qp - otherbody.qp) * G * otherbody.m / (rij ** 3)
 
 
 def Update_jp(dyn_syst):  # update jerk of bodies in system
@@ -56,7 +56,7 @@ def Update_jp(dyn_syst):  # update jerk of bodies in system
                 deltav = (body.vp - otherbody.vp)
                 deltar = (body.qp - otherbody.qp)
                 vr = deltav + 3. * deltar * np.inner(deltav, deltar) / (rij ** 2)
-                body.jp = body.jp - Ga * otherbody.m / (rij ** 3) * vr
+                body.jp = body.jp - G * otherbody.m / (rij ** 3) * vr
 
 
 def Correct(dyn_syst, dt):  # correct position and velocities of bodies in system

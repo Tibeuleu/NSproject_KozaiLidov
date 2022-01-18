@@ -137,7 +137,7 @@ class System(Body):
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.qb-otherbody.qb)
-                    W = W - Ga*body.m*otherbody.m/rij
+                    W = W - G*body.m*otherbody.m/rij
         E = T + W
         return E
 
@@ -150,7 +150,7 @@ class System(Body):
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
-                    W = W - Ga*otherbody.m*body.m/(2.*rij)
+                    W = W - G*otherbody.m*body.m/(2.*rij)
         E = T + W
         return E
 
@@ -171,7 +171,7 @@ class System(Body):
             for otherbody in self.bodylist:
                 if body != otherbody:
                     rij = np.linalg.norm(body.q-otherbody.q)
-                    W = W - Ga*otherbody.m*body.m/(2.*rij)
+                    W = W - G*otherbody.m*body.m/(2.*rij)
         E = T + W
         return E
 
@@ -185,7 +185,7 @@ class System(Body):
     @property
     def eccCOM(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
-            ecc = (2.*self.ECOM*(np.linalg.norm(self.LCOM)**2))/(Ga**2*self.M**2*self.mu**3) + 1.
+            ecc = (2.*self.ECOM*(np.linalg.norm(self.LCOM)**2))/(G**2*self.M**2*self.mu**3) + 1.
 
         else :
             ecc = np.nan
@@ -194,7 +194,7 @@ class System(Body):
     @property
     def smaCOM(self): #semi major axis of two body sub system
         if len(self.bodylist) == 2 :
-            sma = -Ga*self.mu*self.bodylist[0].m/(2.*self.ECOM)
+            sma = -G*self.mu*self.bodylist[0].m/(2.*self.ECOM)
         else :
             sma = np.nan
         return sma
@@ -202,7 +202,7 @@ class System(Body):
     @property
     def ecc(self): #exentricity of two body sub system
         if len(self.bodylist) == 2 :
-            ecc = (2.*self.EBIN*(np.linalg.norm(self.LBIN)**2))/(Ga**2*self.M**2*self.mu**3) + 1.
+            ecc = (2.*self.EBIN*(np.linalg.norm(self.LBIN)**2))/(G**2*self.M**2*self.mu**3) + 1.
         else :
             ecc = np.nan
         return ecc
@@ -210,7 +210,7 @@ class System(Body):
     @property
     def sma(self): #semi major axis of two body sub system
         if len(self.bodylist) == 2 :
-            sma = -Ga*self.mu*self.bodylist[0].m/(2.*self.EBIN)
+            sma = -G*self.mu*self.bodylist[0].m/(2.*self.EBIN)
         else :
             sma = np.nan
         return sma

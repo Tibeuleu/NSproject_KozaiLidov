@@ -22,9 +22,9 @@ def main():
     x3 = np.array([np.cos(psi[2]), 0., np.sin(psi[2])],dtype=np.longdouble)*a[2]*(1.+e[2])
     q = np.array([x1, x2, x3],dtype=np.longdouble)
 
-    v1 = np.array([np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.],dtype=np.longdouble)
-    v2 = np.array([-np.sqrt(Ga*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.],dtype=np.longdouble)
-    v3 = np.array([0., np.sqrt(Ga*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.],dtype=np.longdouble)
+    v1 = np.array([np.sqrt(G*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.],dtype=np.longdouble)
+    v2 = np.array([-np.sqrt(G*m[0]*m[1]/((m[0]+m[1])*np.sqrt(np.sum((q[0]-q[1])**2)))), 0., 0.],dtype=np.longdouble)
+    v3 = np.array([0., np.sqrt(G*(m[0]+m[1])*(2./np.sqrt(np.sum(q[2]**2))-1./a[2])), 0.],dtype=np.longdouble)
     v = np.array([v1, v2, v3],dtype=np.longdouble)
 
     #integration parameters

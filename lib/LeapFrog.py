@@ -22,7 +22,7 @@ def Kick(dyn_syst, dt):
         for otherbody in dyn_syst.bodylist:
             if body != otherbody:
                 rij = np.linalg.norm(body.q - otherbody.q)
-                body.a = body.a - (body.q - otherbody.q) * Ga * otherbody.m / (rij ** 3)
+                body.a = body.a - (body.q - otherbody.q) * G * otherbody.m / (rij ** 3)
         body.v = body.v + dt * body.a
 
 
